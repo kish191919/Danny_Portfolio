@@ -1,63 +1,38 @@
 
-# 프로젝트 : House Prices: Advanced Regression Techniques
+# Project : House Prices: Advanced Regression Techniques
 ---
 
-## 1. 팀소개
-### 1) 팀명 : 데르렁팀
- 
-### 2) 팀원 :  
-   >  김명학 : 그래프와 코닝튜닝 및 장소섭외     
- 
-   >  조아라 : 데이터 분석과 성능 및 간식담당 
- 
-   >  기성환 : 팀의 진행상황 보고 및 깃헙 관리  
+## 1. Data Introduce
+### 1.1 Purpose :   Predict SalePrice
 
+### 1.2 Data set:
+   > - Use house data in Ames. Iowa
+   
+   > - Train Data : It consists of 81 variables and 1460 house data
 
-## 2. 데이터 소개
-### 2.1 목           표 : Test Data의  SalePrice (집값) 예측
+   > - Test Data  : It consists of 80 variables and 1459 house data
 
-### 2.2 데이터 :
-   > - 집값 예측 데이터는 미국 Ames. Iowa 지역의 데이터
+   > - Total Data : 2919 house data
+   > - [Source : House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques "House Prices: Advanced Regression Techniques")
 
-   > - Train Data : 1460개 집값 데이터와 집값이 포함된 81개의 변수로 구성
-
-   > - Test Data  : 1459개 집값 데이터와 집값이 제외된 80개의 변수로 구성
-
-   > - 총 Data : 2919개 집값 데이터
-   > - [데이터 출처 : House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques "House Prices: Advanced Regression Techniques")
-
-### 2.3 평기기준 
+### 1.3 Evaluation
    > - Root-Mean-Squared-Error (RMSE)  
 
 $$
 RMSE = \sqrt{\frac{1}{n}\Sigma_{i=1}^{n}{\Big(\frac{d_i -f_i}{\sigma_i}\Big)^2}}
 $$
 
-### 2.4 경연관련:
-   > - 시작 : 8/30/2016
 
-   > - 마감 : 3/01/2017
+### 2. Exploring the Data 
+Let's start with importing the necessary libaries, reading in the data and checking out the dataset.
 
-   > - 참가팀 : 총 4469팀 (2018.3.13 기준)
-   
-   > - 일일 제출 제한 횟수 : 5 회 / 일
-  
-   > - **최종점수 : 0.12384   캐글 등수 : 1042 / 4548 (상위 22.9%)**
-   
-
- 
-## 3. 진행 순서
-
-![image.png](attachment:image.png)
-
-![image.png](attachment:image.png)
+Note that the last column from this dataset, 'SalePrice' will be our target label. All other columns are features about each individual in house database
 
 
 ```python
-import pandas as pd
+# Import libraries necessary for this project
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
 import scipy as sp
 from scipy import stats
 import statsmodels.api as sm
@@ -65,26 +40,107 @@ import statsmodels.formula.api as smf
 import statsmodels.stats.api as sms
 from scipy.stats import norm, skew 
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-import warnings
 
+# Import visualisation libraries
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Pretty display for notebooks
+%matplotlib inline
+
+# Allows the use of display() for DataFrames
+from IPython.display import display 
+
+# Ignore the warnings
+import warnings
 warnings.filterwarnings('ignore')
+
+# Load the dataset
+train = pd.read_csv("./Input/train.csv")
+test = pd.read_csv("./Input/test.csv")
+
+# Success - Display the first record
+display(train.head(n=1))
 ```
 
-    /anaconda3/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
+    /Users/sunghwanki/anaconda3/lib/python3.6/site-packages/statsmodels/compat/pandas.py:56: FutureWarning: The pandas.core.datetools module is deprecated and will be removed in a future version. Please use the pandas.tseries module instead.
       from pandas.core import datetools
 
 
-### 1. EDA 
-### 1-1 데이터 소개
-#### (1) 데이터 불러오기
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>MSSubClass</th>
+      <th>MSZoning</th>
+      <th>LotFrontage</th>
+      <th>LotArea</th>
+      <th>Street</th>
+      <th>Alley</th>
+      <th>LotShape</th>
+      <th>LandContour</th>
+      <th>Utilities</th>
+      <th>...</th>
+      <th>PoolArea</th>
+      <th>PoolQC</th>
+      <th>Fence</th>
+      <th>MiscFeature</th>
+      <th>MiscVal</th>
+      <th>MoSold</th>
+      <th>YrSold</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>60</td>
+      <td>RL</td>
+      <td>65.0</td>
+      <td>8450</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>208500</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 81 columns</p>
+</div>
 
 
-```python
-train = pd.read_csv("./Input/train.csv")
-test = pd.read_csv("./Input/test.csv")
-```
-
-#### (2) 데이터 갯수확인
+#### (1) Check data
 
 
 ```python
@@ -97,10 +153,9 @@ print("Test  data : ", test.shape)
 
 
 #### Comments :
+There are 1460 instances of training data and 1460 of test data. Total number of attributes equals 81
 
-1. Test 데이터에 SalePrice 열이 제외되었고 제외된 Test 데이터의 SalePrice를 예측하는 것이 이 경연대회의 목표이다
-
-#### (3) Train 데이터 현황
+#### (2) Status of Train data
 
 
 ```python
@@ -111,17 +166,17 @@ train.describe()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -352,11 +407,10 @@ train.describe()
 
 
 #### Comment :
-1. Count : LotFrontage, MasVnrArea 등 일부 데이터가 분실된 것을 확인 
-2. Mean & 50% : 데이터가 특정값에 치우침이 있음
-3. min & 25% & 50% & 75% & max : 데이터의 값이 없는 항목들이 다수 발견이 되어있음 
+1. Count :Some data such as LotFrontage and MasVnrArea are lost
+2. Mean & 50% : Some data is biased to a certain value
 
-#### (4) 타겟 데이터 (SalePrice) 탐색
+#### (3) Explore SalePrice 
 
 
 ```python
@@ -380,7 +434,7 @@ print("Kurtosis: %f" % train['SalePrice'].kurt())
 ```
 
 
-![png](output_13_0.png)
+![png](output_10_0.png)
 
 
     count      1460.000000
@@ -398,11 +452,9 @@ print("Kurtosis: %f" % train['SalePrice'].kurt())
 
 
 #### Comments :
-1. SalePrice가 왼쪽으로 데이터가 쏠림을 확인할 수 잇음
-2. QQ Plot을 통해 그래프가 휘어져있음을 확인하였고 추후 모델에 넣기 전에 정규화가 필요함
-3. SalePrice의 이상치를 확인할 수 있으며, 추후 제거가 필요함
+1. It is apparent that SalePrice doesn't follow normal distribution and has positive skewness.
 
-#### (5) 타겟 데이터의 정규화
+#### (4) SalePrice log transformation
 
 
 ```python
@@ -423,24 +475,25 @@ plt.show()
 ```
 
 
-![png](output_16_0.png)
+![png](output_13_0.png)
 
 
 #### Comment:
-1. SalePrice를 정규한 후의 좌우 쏠림도 많이 줄어들고 정규성을 띄고 있음이 확인됨
+1. After log transformation, it seems to follow normal distribution.
 
-### 1-2 Analysis the univariance
+### 2-2 Feature Type
 
-#### (1) Numeric 과 Catergoric 변수 분리
+#### (1) Check Numerical and Catergorical variables
 
 
 ```python
-#MSSubClass 변수는 카테고리값이므로 숫자 데이터를 문자데이터로 수정 
+# Because the MSSubClass variable is a category value, change numeric data to character data
 train["MSSubClass"] = train["MSSubClass"].astype('str')
 ```
 
 
 ```python
+# Divide into numeric and categorical variables
 numerical_features = []
 categorical_features = []
 for f in train.columns:
@@ -468,7 +521,8 @@ print("Categorical Features :", categorical_features)
     Categorical Features : ['MSSubClass', 'MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour', 'Utilities', 'LotConfig', 'LandSlope', 'Neighborhood', 'Condition1', 'Condition2', 'BldgType', 'HouseStyle', 'RoofStyle', 'RoofMatl', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'ExterQual', 'ExterCond', 'Foundation', 'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2', 'Heating', 'HeatingQC', 'CentralAir', 'Electrical', 'KitchenQual', 'Functional', 'FireplaceQu', 'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond', 'PavedDrive', 'PoolQC', 'Fence', 'MiscFeature', 'SaleType', 'SaleCondition']
 
 
-#### (2) 정량적 (Numerical) 변수와  SalePrice과의 상관그래프
+#### (2) Graph for numerical features with  SalePrice
+It also would be useful to see how sale price compares to each independent variable.
 
 
 ```python
@@ -485,10 +539,10 @@ for idx, n in enumerate(numerical_features):
 ```
 
 
-![png](output_24_0.png)
+![png](output_21_0.png)
 
 
-#### (3) 정성적 (Categorical) 변수의 그래프
+#### (3) Graph for categorical features with  SalePrice
 
 
 ```python
@@ -503,16 +557,16 @@ for idx, n in enumerate(categorical_features):
 ```
 
 
-![png](output_26_0.png)
+![png](output_23_0.png)
 
 
-### 1-3 타겟 데이터(SalePrice)와 변수들 간의 관계
+### 2-3 Relationship between SalePrice and variables
 
-#### 1-3-1 거실 넓이와  이층 & 베이스먼트 여부
+#### 2-3-1 Area
 
 
 ```python
-#train를 카피해서 새로 df_train만든후 2층과 베이스먼트 여부를 확인 
+# Make df_train set to check 2ndFloor and Basement
 df_train = train.copy()
 df_train["2ndFloor"] = "2ndFloor"
 df_train["2ndFloor"].loc[df_train["2ndFlrSF"]==0] = "No 2ndFloor"
@@ -522,23 +576,24 @@ df_train["Basement"].loc[df_train["TotalBsmtSF"]==0] = "No Basement"
 
 
 ```python
+# Joint plot GrLivArea/saleprice
 grid = sns.jointplot(x = "GrLivArea", y = "SalePrice", data=train, kind="reg")
 grid.fig.set_size_inches(15,5)
 
+# Strip plot GrLivArea/2ndFloor/saleprice
 plt.figure(figsize = (20,8))
 plt.subplot(211)
 g = sns.stripplot(x = "GrLivArea", y = 'SalePrice', hue = "2ndFloor", data = df_train, alpha = 0.7)
 g.set_xlabel('GrLivArea')
 g.set_ylabel('SalePrice')
-g.set_ylim(0,900000)
 g.set_xticks([])
 g.set_title('GrLiv & 2ndFloor - SalePrice')
 
+# Strip plot GrLivArea/Basement/saleprice
 plt.subplot(212)
 b = sns.stripplot( x = "GrLivArea", y = 'SalePrice', hue = "Basement", data = df_train, alpha = 0.7)
 b.set_xlabel('GrLivArea')
 b.set_ylabel('SalePrice')
-b.set_ylim(0,900000)
 b.set_title('GrLivArea & Basement - SalePrice')
 b.set_xticks([])
 
@@ -546,24 +601,24 @@ plt.show()
 ```
 
 
-![png](output_30_0.png)
+![png](output_27_0.png)
 
 
 
-![png](output_30_1.png)
+![png](output_27_1.png)
 
 
 #### Comments : 
-1. GrLivArea는 집값에 선형관계이며, 이분산성을 갖고 있음
+1.GrLivArea is a linear relationship to house values and is heterogeneous.
 
-2. 집값이 약 20만불 이상일 경우, 2층집이 더 많으며, 베이스먼트가 없는 집들이 없음
+2.If the house price is above $ 200,000, there are more houses on the second floor and a few houses without basement
 
-#### 1-3-2 집의 품질과 컨디션 
+#### 2-3-2 Overall
 
 
 ```python
+# Graph for GrLivArea & OverallQual - SalePrice
 plt.figure(figsize=(15,8))
-
 ax1 = plt.subplot2grid((2,2), (0,0), colspan = 2)
 for qual in range(1,11):
     index = train.OverallQual == qual
@@ -573,11 +628,12 @@ ax1.set_title("GrLivArea & OverallQual - SalePrice")
 ax1.set_xlabel('GrLivArea & OverallQual')
 ax1.set_ylabel('SalePrice')
 
-
+# Graph for OverallQual - SalePrice
 ax2 = plt.subplot2grid((2,2), (1,0))
 sns.boxplot(x = "OverallQual", y = "SalePrice", data=train, ax= ax2)
 ax2.set_title('OverallQual - SalePrice')
 
+# Graph for OverallCond - SalePrice
 ax3 = plt.subplot2grid((2,2), (1,1))
 sns.boxplot(x = "OverallCond", y = "SalePrice", data=train, ax= ax3)
 ax3.set_title('OverallCond - SalePrice')
@@ -591,19 +647,18 @@ ax3.set_title('OverallCond - SalePrice')
 
 
 
-![png](output_33_1.png)
+![png](output_30_1.png)
 
 
 #### Comments :
 
-1. 집의 품질평가가 좋을수록 집값은 높아진다는 선형관계를 발견할 수 있었으나 overall condition과 집값 사이의 관계는 거의 없는 것을 발견
+1. 'OverallQual' seem to be related with 'SalePrice' and the box plot shows how sales prices increase with the overall quality. however, the 'OverallCond' seem to be not related.
 
-2. 두 항목 모두 1은 Very Poor 이며, 10은 Very Excellent 값을 갖음
-
-#### 1-3-3 GarageArea & GarageCars
+#### 2-3-3 Garage
 
 
 ```python
+# Graph for GarageArea & GarageCars - SalePrice
 plt.figure(figsize=(15,6))
 
 ax1 = plt.subplot(1,2,1)
@@ -611,11 +666,13 @@ for car in range(0,5):
     index = train.GarageCars == car
     ax1.scatter(x = train.GarageArea.loc[index], y = train.SalePrice.loc[index], data=train, label=car, alpha='0.5')
 
+# Graph for GarageArea 
 ax1.legend()
 ax1.set_title('GarageArea - SalePrice')
 ax1.set_xlabel('GarageArea')
 ax1.set_ylabel('SalePrice')
 
+# Graph for GarageCars
 ax2 = plt.subplot(1,2,2)
 sns.stripplot(x = "GarageCars", y = "SalePrice", data=train,ax=ax2, jitter=True)
 ax2.set_title('GarageCars - SalePrice')
@@ -624,25 +681,22 @@ ax2.legend()
 plt.show()
 ```
 
-    No handles with labels found to put in legend.
 
-
-
-![png](output_36_1.png)
+![png](output_33_0.png)
 
 
 #### Comments:
-1. 집값이 높을수록 GarageArea가 넓어지고 창고에 넣을 수 있는 자동차 대수(GarageCars)도 많아지는것을 알 수 있음
+1. The wider the GarageArea and the larger the number of cars (GarageCars), it can be seen that the higher the house price
 
-#### 1-3-4 이웃
+#### 2-3-4 Neighborhood
 
 
 ```python
-#Neighborhood 변수를 각 이웃별로 그룹화 한 후에 평균으로 집계
+# Neighborhood variables are grouped by neighbors and then aggregated by average
 Neighbor = train.pivot_table(index="Neighborhood",values="SalePrice", aggfunc='mean').sort_values(by = ["SalePrice"], ascending = False)
 Neighbor = Neighbor.reset_index()
 
-#평균으로 집계된 자료를 bar그래프로 가격이 높은 순에서 낮은 순으로 나열
+# The bar graph displays the aggregated data in the order of the highest to lowest price
 g = sns.factorplot(x = "Neighborhood", y="SalePrice", data=Neighbor, size =8, kind="bar")
 g.set_xticklabels(rotation=45)
 g.fig.set_size_inches(15,5)
@@ -650,12 +704,12 @@ plt.show()
 ```
 
 
-![png](output_39_0.png)
+![png](output_36_0.png)
 
 
 
 ```python
-#집값이 25만 이상을 High_price_neighbor, 25만 ~ 15만 사이의 이웃을 Middle_price_neighbor, 나머지 이웃을 Low_price_neighbor로 구분
+# High_price_neighbor is the house value of more than 250,000, Middle_price_neighbor is the neighbor of 250,000 ~ 150,000, and Low_price_neighbor is the remaining neighbor
 def neighbor_level(x):
     High_price_neighbor = ['NoRidge','NridgHt','StoneBr'] 
     Middle_price_neighbor = ['Timber','Somerst','Veenker','ClearCr','Crawfor','NWAmes', 'Gilbert','Blmngtn', 'SWISU','Mitchel','CollgCr']
@@ -677,7 +731,7 @@ fig, ax = plt.subplots(5,8, figsize = (20,20))
 
 for idx, n in enumerate(numerical_features):
 
-    sns.barplot(x="neighbor_level", y= n, data=df_train, ax = ax[idx//8,idx%8])
+    sns.barplot(x="neighbor_level", y= n, data=df_train, ax = ax[idx//8,idx%8], order=['high', 'middle', 'low'])
     ax[idx//8, idx % 8].set(yticklabels=[])
     ax[idx//8, idx % 8].set_xlabel("")
     ax[idx//8, idx % 8].set_ylabel(n)
@@ -685,52 +739,95 @@ for idx, n in enumerate(numerical_features):
 ```
 
 
-![png](output_41_0.png)
+![png](output_38_0.png)
 
 
 #### Comments:
-1. Overall Quality (집의 품질), GrLivArea (거실 크기), GargeArea(차고 넓이)등 전반인 부분이 high level이 평균적으로 높고 넓으며 집값예측에 중요한 요인이 될 수 있음을 확인
+1. High group's Overall quality (overall quality), GrLivArea (living room size), and GargeArea (garage width) are high on the average, which is an important factor in predicting house prices
 
-
-#### 1-3-4 연도
+#### 2-3-4 Year
 
 
 ```python
-# 지어진 연도와 SalePrice간의 상관관계 
+# Correlation between YearBuilt and SalePrice
+# Boxplot YearBuilt / SalePrice
 plt.figure(figsize=(15,6))
 fig = sns.boxplot(x="YearBuilt", y="SalePrice", data=train)
 fig.axis(ymin=0, ymax=800000)
 plt.xticks(rotation=90)
 plt.show()
 
-# 리모델링 연도와 SalePrice간의 상관관계를 strip plot으로 표현 
+# Stripplot YearRemodAdd / YearBuilt
 plt.figure(figsize=(15,6))
 ax2 = plt.subplot(1,2,1)
 sns.stripplot(x = train['YearBuilt'], y = train['YearRemodAdd'], alpha = 0.5,ax=ax2)
-ax2.legend()
 ax2.set_xticks([])
 plt.xlabel('YearBuilt')
 plt.ylabel('YearRemodAdd')
 
-# YrSold 변수를 countplot으로 표현 
+# Countplot YrSold 
 ax3 = plt.subplot(1,2,2)
 sns.countplot(x = train['YrSold'], alpha = 0.5, ax=ax3)
 plt.show()
 
-# YearBuilt와 OverallQual의 상관관계를 분석하기위해 stripplot으로 분석 
-# 연도에따른 상관관계를 어느정도 확인할 수 있다.
+# Stripplot YearBuilt / OverallQual
 plt.figure(figsize=(15,6))
 ax4 = plt.subplot2grid((2,2), (0,0), colspan = 2)
 sns.stripplot(x = train['YearBuilt'], y = train['OverallQual'], alpha = 0.5,ax=ax4)
-ax4.legend()
+
 ax4.set_xticks([])
 plt.xlabel('YearBuilt')
 plt.ylabel('OverallQual')
 
-# MoSold 변수를 countplot으로 표현 
-# 특정월에 좀 더 많은 판매가 있음을 뚜렷하게 확인할 수 있다.
+# Countplot MoSold  
 ax5 = plt.subplot2grid((2,2), (1,0), colspan = 2)
 sns.countplot(x = "MoSold", data=train, ax = ax5)
+plt.show()
+```
+
+
+![png](output_41_0.png)
+
+
+
+![png](output_41_1.png)
+
+
+
+![png](output_41_2.png)
+
+
+#### Comments :
+
+1. The price of recently built house is high.
+2. Houses that have not been remodeled are recorded in the same year as the year they were built.
+3. Remodeling took place after 1950 and most of the old houses were remodeled in 1950.
+4. The year of the sale is from 2006 to 2010, with the largest sale in 2009.
+5. The most active trading takes place in May, June, and July.
+
+### 2-3-5 Fireplaces
+
+
+```python
+# Stripplot Fireplaces / SalePrice
+plt.figure(figsize=(15,10))
+ax1 = plt.subplot2grid((2,2), (0,0), colspan = 2)
+sns.stripplot(x = train['Fireplaces'], y = train['SalePrice'], alpha = 0.5, jitter = True, ax=ax1)
+
+# Countplot FireplaceQu 
+ax2 = plt.subplot2grid((2,2), (1,0))
+sns.countplot(x = "FireplaceQu", data=train, ax = ax2, order = ['Ex', 'Gd', 'TA', 'Fa', 'Po'])
+
+# Boxplot FireplaceQu / OverallQual
+ax3 = plt.subplot2grid((2,2), (1,1))
+sns.boxplot(x = 'FireplaceQu', y = 'OverallQual', data = train, order = ['Ex', 'Gd', 'TA', 'Fa', 'Po'], ax=ax3)
+plt.show()
+
+# Stripplot FireplaceQu / Fireplaces / SalePrice
+plt.figure(figsize=(15,10))
+ax4 = plt.subplot(2,1,1)
+sns.stripplot(x='FireplaceQu', y='SalePrice', hue='Fireplaces', data=train, jitter=True, alpha=0.6,order = ['Ex', 'Gd', 'TA', 'Fa', 'Po'], ax=ax4)
+
 plt.show()
 ```
 
@@ -738,54 +835,43 @@ plt.show()
 ![png](output_44_0.png)
 
 
-    No handles with labels found to put in legend.
+
+![png](output_44_1.png)
 
 
+#### Comments:
 
-![png](output_44_2.png)
+1. There is a price difference between a house with zero FirePlaces and a house with one FirePlaces.
+2. FireplaceQu and OverallQual are closely related.
+3. The lower the FireplaceQu, the lower the SalePrice
 
-
-    No handles with labels found to put in legend.
-
-
-
-![png](output_44_4.png)
-
-
-#### Comments :
-
-1. 1950년대 이후로 지어진 집부터는 대체로 최근에 지어진 집의 가격이 높음을 알 수 있음.
-2. 아직 리모델링이 되지 않은 집은 만들어진 년도와 같은 년도로 기록되어 있음.
-3. 리모델링은 1950년도 이후에 시행되었으며 오래된 집들은 대부분 1950년도에 리모델링 되었다고 기록되어 있음.
-4. 매매년도는 2006년부터 2010년까지의 기록으로 되어있으며, 2009년에 매매가 가장 많음.
-5. OverallQual이 8-10인 집은 대체로 1980년도 이후에 지어진 집임.
-6. 날이 따뜻한 5, 6, 7월에 가장 매매가 활발하게 이루어짐.
-
-### 1-3-5 화로의 갯수와 품질
+### 2-3-6 Basement Bath
 
 
 ```python
-# 벽난로의 수와 SalePrice간의 상관관계 
-# 벽난로의 수가 많을수록 어느정도 상관관계가 있음 확인
-plt.figure(figsize=(15,10))
-ax1 = plt.subplot2grid((2,2), (0,0), colspan = 2)
-sns.stripplot(x = train['Fireplaces'], y = train['SalePrice'], alpha = 0.5, jitter = True, ax=ax1)
+# Stripplot BsmtQual / SalePrice
+plt.figure(figsize=(15,6))
+sns.stripplot(x = "BsmtQual", y = "SalePrice", data=train, jitter=True,\
+             order = ['Ex', 'Gd', 'TA', 'Fa'])
 
-# 전체적인 집의 벽난로 품질이 어느정도 되는지 확인
-ax2 = plt.subplot2grid((2,2), (1,0))
-sns.countplot(x = "FireplaceQu", data=train, ax = ax2, order = train["FireplaceQu"].value_counts().index)
+plt.figure(figsize=(15,6))
 
-# 벽난로의 품질이 집의 전체적인 품질과 어느정도 관계가 있는지 box plot으로 확인
-# Gd, Ex의 경우에는 눈에띄는 관계를 파악
-ax3 = plt.subplot2grid((2,2), (1,1))
-sns.boxplot(x = 'FireplaceQu', y = 'OverallQual', data = train, ax=ax3)
-plt.show()
+# Scatterplot BsmtFullBath
+ax1 = plt.subplot(1,2,1)
+for BSMT in range(0,5):
+    index = train.BsmtFullBath == BSMT
+    ax1.scatter(x = train.BsmtFullBath.loc[index], y = train.SalePrice.loc[index], data=train, label=BSMT, alpha='0.5')
 
-# 벽난로 품질과 SalePrice 간의 상관관계를 stripplot으로 확인
-# 벽난로 갯수로 label을 해서 벽난로의 품질과 수에따른 SalePrice에 대해 확인
-plt.figure(figsize=(15,10))
-ax4 = plt.subplot(2,1,1)
-sns.stripplot(x='FireplaceQu', y='SalePrice', hue='Fireplaces', data=train, jitter=True, alpha=0.6, ax=ax4)
+# ax1.legend()
+ax1.set_title('BsmtFullBath - SalePrice')
+ax1.set_xlabel('BsmtFullBath')
+ax1.set_ylabel('SalePrice')
+
+# Stripplot BsmtHalfBath / SalePrice
+ax2 = plt.subplot(1,2,2)
+sns.stripplot(x = "BsmtHalfBath", y = "SalePrice", data=train,ax=ax2, jitter=True)
+ax2.set_title('BsmtHalfBath - SalePrice')
+
 
 plt.show()
 ```
@@ -798,41 +884,31 @@ plt.show()
 ![png](output_47_1.png)
 
 
-#### Comments:
+#### Comment :
+1. The higher the quality of the bathroom, the higher the house price.
+2. In the case of HalfBath, the more the house price goes down
 
-1. FirePlaces가 0개인 집과 1개인 집의 가격 차이가 있음을 볼 수 있음.
-2. FireplaceQu와 OverallQual은 밀접한 관계가 있음.
-3. FireplaceQu는 SalePrice에 많은 영향을 미친다고 볼 수는 없음.
-4. 같은 GrLivArea임에도 Fireplaces의 갯수는 차이가 있음.
-
-### 1-3-6 지하 욕실
+### 2-3-7 Room
 
 
 ```python
-# BsmtQual와 SalePrice 의 상관관계를 확인 품질에 따른 변화를 뚜렷하게 확인할 수 있다.
-plt.figure(figsize=(15,6))
-sns.stripplot(x = "BsmtQual", y = "SalePrice", data=train, jitter=True)
+# Stripplot TotRmsAbvGrd / SalePrice
+plt.figure(figsize=(15,8))
+ax1 = plt.subplot(2,1,1)
+sns.stripplot(x='TotRmsAbvGrd', y='SalePrice', hue='TotRmsAbvGrd', data=train, jitter=True, alpha=0.6, ax=ax1)
 
-plt.figure(figsize=(15,6))
+# Countplot TotRmsAbvGrd
+ax2 = plt.subplot2grid((2,2), (1,0))
+sns.countplot(x = "TotRmsAbvGrd", data=train , ax = ax2, order = train["TotRmsAbvGrd"].value_counts().index)
 
-# BSMT를 label로 이용해서 BsmtFullBath와 SalePrice와의 관계를 표현
-ax1 = plt.subplot(1,2,1)
-for BSMT in range(0,5):
-    index = train.BsmtFullBath == BSMT
-    ax1.scatter(x = train.BsmtFullBath.loc[index], y = train.SalePrice.loc[index], data=train, label=BSMT, alpha='0.5')
-
-# ax1.legend()
-ax1.set_title('BsmtFullBath - SalePrice')
-ax1.set_xlabel('BsmtFullBath')
-ax1.set_ylabel('SalePrice')
-
-# BsmtHalfBath 와 SalePrice의 관계 표시 
-ax2 = plt.subplot(1,2,2)
-sns.stripplot(x = "BsmtHalfBath", y = "SalePrice", data=train,ax=ax2, jitter=True)
-ax2.set_title('BsmtHalfBath - SalePrice')
-
-
+# Boxplot TotRmsAbvGrd / OverallQual
+ax3 = plt.subplot2grid((2,2), (1,1))
+sns.boxplot(x = 'TotRmsAbvGrd', y = 'OverallQual', data = train, ax=ax3)
 plt.show()
+
+# Jointplot TotRmsAbvGrd / SalePrice
+grid = sns.jointplot(x = "TotRmsAbvGrd", y = "SalePrice", data=train, kind="reg", size = 8)
+grid.fig.set_size_inches(15,5)
 ```
 
 
@@ -844,57 +920,24 @@ plt.show()
 
 
 #### Comment :
-1. 욕실의 품질이 좋을 수록 집값이 높아지는 것을 알 수 있음
-2. HalfBath의 경우에는 많을수록 집값은 더 내려가는 것을 확인할 수 있음.
 
-### 1-3-7 방의 갯수
+1. The higher the number of rooms (TotRmsAbvGrd), the higher the house prices tend to be.
+2. The better the room, the better the quality of the house.
 
+### 3. Feature Engineering
 
-```python
-# TotRmsAbvGrd 에 따른 SalePrice 와의 상관관계를 표시했다 
-# 상관관계가 어느정도 보인다
-plt.figure(figsize=(15,8))
-ax1 = plt.subplot(2,1,1)
-sns.stripplot(x='TotRmsAbvGrd', y='SalePrice', hue='TotRmsAbvGrd', data=train, jitter=True, alpha=0.6, ax=ax1)
+### 3-1 Missing Values
 
-ax2 = plt.subplot2grid((2,2), (1,0))
-sns.countplot(x = "TotRmsAbvGrd", data=train , ax = ax2, order = train["TotRmsAbvGrd"].value_counts().index)
-
-ax3 = plt.subplot2grid((2,2), (1,1))
-sns.boxplot(x = 'TotRmsAbvGrd', y = 'OverallQual', data = train, ax=ax3)
-plt.show()
-
-
-grid = sns.jointplot(x = "TotRmsAbvGrd", y = "SalePrice", data=train, kind="reg", size = 8)
-grid.fig.set_size_inches(15,5)
-```
-
-
-![png](output_53_0.png)
-
-
-
-![png](output_53_1.png)
-
-
-#### Comment :
-
-1. 방의 수가(TotRmsAbvGrd) 많을수록 집값은 높은 경향이 있음
-2. 방의 수가 좋을수록 집의 품질도 좋아진다는 상관관계를 확인할 수 있음
-
-
-### 2. Feature Engineering
-
-### 2-1 Missing Data 처리
-
-#### 2-1-1 Train 데이터와 Test 데이터 결합
-Train과 Test데이터를 결합한 후 missing 데이터를 한꺼번에 처리
+#### 3-1-1 Join Train and Test set
+Combine Train and Test data and process missing data at once
 
 
 ```python
-#train/test data의 차원저장
+# Save lenth of train and test set
 ntrain = train.shape[0]
 ntest = test.shape[0]
+
+# Combine Train and Test data 
 all_data = pd.concat((train, test)).reset_index(drop=True)
 print("All data size is {}".format(all_data.shape))
 ```
@@ -902,22 +945,24 @@ print("All data size is {}".format(all_data.shape))
     All data size is (2919, 81)
 
 
-#### 2-1-2 Missing Data 현황
+#### 3-1-2 Statuse of missing values
 
 
 ```python
-# all_data의 독립성을 유지하기 위해 all_data_cp 에 복사해서 코딩진행 
+# To maintain the independence of all_data, copy it to all_data_cp and proceed with it
 all_data_cp = all_data.copy()
-# saleprice 항목 drop  
+
+# Drop saleprice column 
 all_data_cp.drop(['SalePrice'], axis=1, inplace=True)
-# all_data중에 널값을 확인하기 위한 코드
-# all_data_null 변수에 null/len(all_data)로 구해서 표시
+
+
+# Chck missing values 
 all_data_null = all_data_cp.isnull().sum()
 all_data_null = all_data_null.drop(all_data_null[all_data_null == 0].index).sort_values(ascending=False)
 all_data_missing = pd.DataFrame({'Missing Numbers' :all_data_null})
 all_data_null =  all_data_null / len(all_data_cp)*100
 
-# 위에서 구한 null 값을 이용해서 missing data feature를 plot으로 표현 
+# Barplot missing values
 f, ax = plt.subplots(figsize=(15, 12))
 plt.xticks(rotation='90')
 sns.barplot(x=all_data_null.index, y=all_data_null)
@@ -925,24 +970,26 @@ plt.xlabel('Features', fontsize=15)
 plt.ylabel('Percent of missing values', fontsize=15)
 plt.title('Percent missing data by feature', fontsize=15)
 
-print("Missing Data가 포함된 변수의 갯수 : " , all_data_missing.count().values)
-print("총 Missing Data 갯수 : " , all_data_missing.sum().values)
+print("Variables with Missing Qty : " , all_data_missing.count().values)
+print("Total Missing values Qty : " , all_data_missing.sum().values)
 ```
 
-    Missing Data가 포함된 변수의 갯수 :  [34]
-    총 Missing Data 갯수 :  [13965]
+    Variables with Missing Qty :  [34]
+    Total Missing values Qty :  [13965]
 
 
 
-![png](output_60_1.png)
+![png](output_57_1.png)
 
 
-#### 2-1-3 Missing Data 처리방식
+34 attributes have missing values. Most of times NA means lack of subject described by attribute, like missing pool, fence, no garage and basement.
+
+#### 3-1-3 Missing Values processing
 
 MSSubClass
 
- - 변수 설명 : 집안 판매와 관련된 종합적인 유형 식별 
- - 변수 처리 : 데이터가 고르게 분포되어있고 특정 데이터로 판단하기 어렵기에 None값으로 채워줌
+ - Description : Identifies the type of dwelling involved in the sale
+ - Process : Missing values are filled with None because the data is evenly distributed and hard to judge by specific value
 
 
 ```python
@@ -950,8 +997,8 @@ all_data['MSSubClass'] = all_data['MSSubClass'].fillna("None")
 ```
 
 SaleType
- - 변수 설명 : 집계약의 판매 방식을 기입   
- - 처리 방법 : 전체 데이터 중 87%가 WD (Warranty Deed - Conventional) 방식을 사용하고 있으므로 Missing Data을 WD로 채워넣었음 
+ - Description: Type of sale   
+ - Process : 87% of data uses WD (Warranty Deed - Conventional) method, so Missing Data is filled with WD
 
 
 ```python
@@ -959,8 +1006,8 @@ all_data['SaleType'] = all_data['SaleType'].fillna(all_data['SaleType'].mode()[0
 ```
 
 KitchenQual:
- - 변수 설명 : 부억의 품질
- - 처리 방법 : 전체 데이터 중 52%가 TA (Typical/Average)의 등급이 되어있으므로 Missing Data을  TA로 채워넣었음
+ - Description : Kitchen quality
+ - Process : 52% of the total data is classified as TA (Typical / Average), so Missing Data is filled with TA
 
 
 ```python
@@ -969,8 +1016,8 @@ all_data['KitchenQual'] = all_data['KitchenQual'].fillna(all_data['KitchenQual']
 
 BsmtFinSF1 & BsmtFinSF2
 
- - 변수 설명 : 지하실의 마감 품질 
- - 처리 방법 : 두 데이터 모두 약35%의 데이터가 0으로 되어있으므로 Missing Data을 0으로 채워넣었음
+ - Description : Finished basement square feet
+ - Process : In both data, about 35% of the data is zero. Therefore, Missing Data is also filled with 0.
 
 
 ```python
@@ -980,8 +1027,8 @@ all_data['BsmtFinSF2'] = all_data['BsmtFinSF2'].fillna(0)
 
 GarageCars  &  GarageArea & GarageYrBlt
 
- - 변수 설명 : 차고의 자동차 수 & 차고 크기 & 건축연한
- - 처리 방법 : 데이터가 missing이라는것은 차가 없다는 것을 의미하기에 Missing Data를 0으로 채워넣음
+ - Description : Qty, Size, year of garage 
+ - Process : Missing data means that there is no garage, so filling Missing Data with 0
 
 
 ```python
@@ -992,8 +1039,8 @@ all_data['GarageYrBlt'] = all_data['GarageYrBlt'].fillna(0)
 
 TotalBsmtSF
 
- - 변수 설명 : 지하실 면적의 총 평방 피트 (크기)
- - 처리 방법 : 데이터가 missing이라는것은 지하실이 없다는 것을 의미하기에 Missing Data를 0으로 채워넣음
+ - Description : Total square feet of basement area
+ - Process : Missing data means that there is no basement, so filling Missing Data with 0
 
 
 ```python
@@ -1002,8 +1049,8 @@ all_data['TotalBsmtSF'] = all_data['TotalBsmtSF'].fillna(0)
 
 BsmtUnfSF
 
- - 변수 설명 : 지하 공간의 미완성 된 공간의 크기
- - 처리 방법 : 데이터가 missing이라는것은 지하실이 없다는 것을 의미하기에 Missing Data를 0으로 채워넣음
+ - Description : Unfinished square feet of basement area
+ - Process : Missing data means that there is no basement, so filling Missing Data with 0
 
 
 ```python
@@ -1012,8 +1059,8 @@ all_data['BsmtUnfSF'] = all_data['BsmtUnfSF'].fillna(0)
 
 BsmtQual & BsmtCond
 
- - 변수 설명 : 지하실 높이에 따른 품질 & Condition
- - 처리 방법 : BsmtQual 데이터에서의 Nan값은 지하실이없어 품질 측정 BsmtCond같은 경우에도 비슷한 성격의 변수이기에 Nan값은 None으로 변환해줌
+ - Description : Evaluates the height and condition of the basement
+ - Process : Missing values in BsmtQual and BsmtCond data are converted to None because there is no basement
 
 
 ```python
@@ -1023,8 +1070,8 @@ all_data['BsmtCond']=all_data['BsmtCond'].fillna('None')
 
 BsmtExposure & BsmtFinType1 & BsmtFinType2
 
- - 변수 설명 : 지하실의 품질관련 변수 
- - 처리 방법 : 여기에서 Nan값은 지하실이 없는 집을 표기한것으로 None 값으로 변환
+ - Description : Refers to walkout or garden level walls and Rating of basement finished area
+ - Process : In this case, the missing values are a house without a basement.
 
 
 ```python
@@ -1035,8 +1082,8 @@ all_data['BsmtFinType2']=all_data['BsmtFinType2'].fillna('None')
 
 BsmtFullBath & BsmtHalfBath
 
- - 변수 설명 : 화장실 욕조 or 샤워시설 유무에 따라 Full&Half로 나눔 
- - 처리 방법 : Missing data는 욕실이 없음을 의미하다고 판단 Missing data를 0으로 채워넣음
+ - Description : Basement full and half bathrooms 
+ - Process : Missing values mean there is no bath so fill them with 0
 
 
 ```python
@@ -1046,8 +1093,8 @@ all_data['BsmtFullBath'] = all_data['BsmtFullBath'].fillna(0)
 
 Electrical
 
- - 변수 설명 : 전기 규격
- - 처리 방법 : 약 92%이상의 데이터가 SBrkr이라는 전기 규격을 사용 mode값으로 Missing Data 를 채워넣음
+ - Description : Electrical system
+ - Process : Approximately 92% of the data is SBrkr. Fill Missing Data with mode value(SBrkr)
 
 
 ```python
@@ -1056,8 +1103,8 @@ all_data['Electrical'] = all_data['Electrical'].fillna(all_data['Electrical'].mo
 
 Utilities
 
- - 변수 설명 : 사용 가능한 편의 시설
- - 처리 방법 : Test 데이터의 100%가 AllPub으로 이루어져 있어 큰 의미는 없다고 판단 drop 처리함
+ - Description : Type of utilities available
+ - Process : Since 100% of the test data is composed of AllPub, it is judged that there is no big meaning. So drop the column out
 
 
 ```python
@@ -1066,8 +1113,8 @@ all_data.drop(['Utilities'], axis=1, inplace=True)
 
 MSZoning
 
- - 변수 설명 : 주거구역 설명  
- - 처리 방법 : 78%이상의 데이터가 RL로 이루어져 있어 mode값을 사용하여 Missing data들을 처리함
+ - Description : Identifies the general zoning classification of the sale
+ - Process : More than 78% of the data is made up of RL, so the missing values are processed using the mode value.
 
 
 ```python
@@ -1076,8 +1123,8 @@ all_data['MSZoning']=all_data['MSZoning'].fillna(all_data['MSZoning'].mode()[0])
 
 MasVnrArea
 
- - 변수 설명 : 평방 피트 단위의 벽돌 무늬 겉치장
- - 처리 방법 : 약 60%의 데이터가 0이며, 치장이 안되어있는것으로 되어있어 Missing data들은 0으로 데이터를 넣어주어줌
+ - Description : Masonry veneer area in square feet
+ - Process : About 60% of the data is 0, and it is thought that it is not decorated.
 
 
 ```python
@@ -1086,8 +1133,8 @@ all_data['MasVnrArea']=all_data['MasVnrArea'].fillna(0)
 
 MasVnrType
 
- - 변수 설명 : MasVnrArea의 벽돌 무늬 유형
- - 처리 방법 : 약 60%의 데이터가 None 즉 치장이 안되어있는것으로 되어있어 Missing data들은 None 값으로 데이터를 넣어줌
+ - Description : Masonry veneer type 
+ - Process : Approximately 60% of the data is missing, meaning that it is not decorated.
 
 
 ```python
@@ -1096,8 +1143,8 @@ all_data['MasVnrType']=all_data['MasVnrType'].fillna('None')
 
 GarageType
 
- - 변수 설명 : 차고위치
- - 처리 방법 : Attchd, Detchd, BuiltIn, Basment, 2Types, CarPort 총 6가지 카테고리가 있고 여기에서 Nan값은 차고가 없는 사람을 표기한것으로 None 값으로 변환해줌
+ - Description : Garage location
+ - Process : Attchd, Detchd, BuiltIn, Basment, 2Types, CarPort There are 6 categories, where missing value represents the house without garage and converts it to None value.
 
 
 ```python
@@ -1106,8 +1153,8 @@ all_data['GarageType']=all_data['GarageType'].fillna('None')
 
 GarageYrBlt
 
- - 변수 설명 : 차고건축연도
- - 처리 방법 : 차고건축연도는 보통은 건축연도와 같기때문에 Nan값은 건축연도로 채워넣기로 함
+ - Description : Year garage was built
+ - Process : Since the garage construction year is usually the same as the construction year, the Nan value is to be filled with the construction year
 
 
 ```python
@@ -1117,9 +1164,8 @@ all_data['GarageYrBlt']=all_data['GarageYrBlt'].fillna(all_data['YearBuilt'][ al
 
 GarageFinish, GarageCond, GarageQual
 
- - 변수 설명 : 차고 품질관련 카테고리 
- - 처리 방법 : 3가지 feature 모두 비슷한 데이터이고 nan값의 수도 동일함. 
-   Nan값은 차고가 없는 사람을 표기한 것으로 None 값으로 처리
+ - Description : Garage Quality Related Categories
+ - Process : Features are all similar data and have the same number of missing values. Missing values are those without garage and are treated as None values.
 
 
 ```python
@@ -1129,9 +1175,9 @@ all_data['GarageQual']=all_data['GarageQual'].fillna('None')
 ```
 
 LotFrontage
- - 처리 방법 : Neighborhood를 그룹화하여 같은 Neighborhood내의 median값으로 처리
 
-![image.png](attachment:image.png)
+ - Description : Linear feet of street connected to property
+ - Process : Group the Neighborhood and treat it as a median in the same Neighborhood
 
 
 ```python
@@ -1140,8 +1186,8 @@ all_data["LotFrontage"] = all_data.groupby("Neighborhood")["LotFrontage"].transf
 
 FireplaceQu
 
- - 변수 설명 : 벽난로 품질
- - 처리 방법 : Nan값은 벽난로가 없는것을 표기한것으로 None 값으로 변환
+ - Description : Fireplace quality
+ - Process : Missing value indicates that there is no fireplace and it is converted to None value.
 
 
 ```python
@@ -1150,8 +1196,8 @@ all_data['FireplaceQu']=all_data['FireplaceQu'].fillna('None')
 
 Fence
 
- - 변수 설명 : 울타리 품질
- - 처리 방법 : Nan값은 울타리가 없는 것이며, None 값으로 변환
+ - Description : Fence quality
+ - Process : Missing values are fence-less, and convert to None
 
 
 ```python
@@ -1160,9 +1206,8 @@ all_data['Fence']=all_data['Fence'].fillna('None')
 
 Alley
 
- - 처리 방법 : Grvl,Pave 2가지의 카테고리값으로 이루어져있으며 Nan값은 인접한 골목이 없는것을 표기한것으로 None 값으로 변환
-
-![image.png](attachment:image.png)
+ - Description : Type of alley access to property
+ - Process : Grvl, and Pave. The missing values indicate that there are no adjacent alleys, and are converted to None values
 
 
 ```python
@@ -1171,8 +1216,9 @@ all_data['Alley']=all_data['Alley'].fillna('None')
 
 Functional
 
- - 변수 설명 : 집의 용도
- - 처리 방법 : 전체의 93%이상의 데이터가 Typ형식으로 이루어져있어 nan값들은 이 기능들에 포함되는 집이라 예측할 수 있어 Typ으로 대체
+ - Description : Home functionality (Assume typical unless deductions are warranted)
+
+ - Process : Since more than 93% of the total data is in the Typ format, the missing values are expected to be included in these functions
 
 
 ```python
@@ -1181,8 +1227,8 @@ all_data['Functional']= all_data["Functional"].fillna("Typ")
 
 MiscFeature 
 
- - 변수 설명 : 범주에 나타나지 않은 기타 기능들
- - 처리 방법 : nan값들은 이 기능들을 포함하고 있지 않은 집이므로 none값으로 대체
+ - Description : Miscellaneous feature not covered in other categories
+ - Process : The missing values are houses that do not contain these features, so replace them with none
 
 
 ```python
@@ -1191,8 +1237,8 @@ all_data['MiscFeature']=all_data['MiscFeature'].fillna('None')
 
 PoolQC
 
- - 변수 설명 : 수영장 품질
- - 처리 방법 : nan값들은 수영장을 포함하고 있지 않은 집이므로 none값으로 대체
+ - Description : Pool quality
+ - Process : The missing values are houses that do not contain a pool, so replace them with none
 
 
 ```python
@@ -1201,7 +1247,7 @@ all_data['PoolQC']=all_data['PoolQC'].fillna('None')
 
 Exterior1st & Exterior2nd
 
- - 변수 설명 : 주택의 외장재
+ - Description : Exterior covering on house
  - 처리 방법 : 대부분의 외장재가 VinylSd로 되어있어 VinylSd로 예측 nan값을 mode로 채워줌
 
 
@@ -1210,10 +1256,10 @@ all_data['Exterior1st'] = all_data['Exterior1st'].fillna(all_data['Exterior1st']
 all_data['Exterior2nd'] = all_data['Exterior2nd'].fillna(all_data['Exterior2nd'].mode()[0])
 ```
 
-### 2-2 변수간의 상관관계 (Correlation)
+### 3-2 Feature Correlation
 
-#### 2-2-1 정량적 변수 (Numerical Features)
-정량적 변수간의 상관관계를 Heatmap으로 확인 
+#### 3-2-1 Numerical Features
+To explore the features, we will use Correlation matrix (heatmap style). 
 
 
 ```python
@@ -1225,57 +1271,55 @@ sns.heatmap(corrmat, vmax = 1, square=True)
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1c216c09b0>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1c2bdaa6d8>
 
 
 
 
-![png](output_118_1.png)
+![png](output_114_1.png)
 
 
-타겟 데이터(SalePrice)와 상관관계가 높은 순서대로 15개 추출
+This heatmap is the best way to get a quick overview of features relationships. At first sight, there are two red colored squares that get my attention. The first one refers to the 'TotalBsmtSF' and '1stFlrSF' variables, and the second one refers to the 'GarageX' variables. Both cases show how significant the correlation is between these variables. Actually, this correlation is so strong that it can indicate a situation of multicollinearity. If we think about these variables, we can conclude that they give almost the same information so multicollinearity really occurs.
+
+'SalePrice' correlation matrix (High rank 15)
 
 
 ```python
+# 'SalePrice correlation (High rank 15)
+# k is number of variables 
 k = 15
 
 cor_numerical_cols = corrmat.nlargest(k, 'SalePrice')['SalePrice'].index 
-print("정량적 변수(Numerical Features)의 갯수 :" ,len(cor_numerical_cols), "\n")
-print("정량적 변수(Numerical Features)       : \n",list(cor_numerical_cols))
+print("Numerical Features Qty :" ,len(cor_numerical_cols), "\n")
+print("Numerical Features     : \n",list(cor_numerical_cols))
 ```
 
-    정량적 변수(Numerical Features)의 갯수 : 15 
+    Numerical Features Qty : 15 
     
-    정량적 변수(Numerical Features)       : 
+    Numerical Features     : 
      ['SalePrice', 'OverallQual', 'GrLivArea', 'GarageCars', 'GarageArea', 'TotalBsmtSF', '1stFlrSF', 'FullBath', 'TotRmsAbvGrd', 'YearBuilt', 'YearRemodAdd', 'GarageYrBlt', 'MasVnrArea', 'Fireplaces', 'BsmtFinSF1']
 
 
-#### 2-2-2 정성적 변수 (Categorical Features)
+#### Comments :
+
+1. There are many strong correlations between SalePrice and variables.  OverallQual and GrLivArea are strongly correlated with SalePrice.
+
+#### 3-2-2 Categorical Features
 
 
 ```python
+# Select categorical features from train set
 train_cat = train[categorical_features]
 y_train_d = train['SalePrice']
 
-# train_cat = pd.concat([y_train_d, train_cat], axis=1)
-```
-
-
-```python
-#카테고리 데이터의 더미화
+# Dummy of category data
 train_cat_dummies = pd.get_dummies(train_cat)
-```
 
-
-```python
-# 더미화된 데이터와 Saleprice 를 concat 해서 train_cat 변수 생성후 상관관계 계산
+# Concatenate dummied categorical data with SalePrice
 train_cat = pd.concat([y_train_d, train_cat_dummies], axis=1)
 corrmat2 = train_cat.corr()
-```
 
-
-```python
-#상관계수가 높은 상위 10개
+# High correlation coefficient 10
 k = 10
 
 cor_categorical_cols = corrmat2.nlargest(k, 'SalePrice')['SalePrice'].index 
@@ -1292,17 +1336,19 @@ cor_categorical_cols
 
 
 
-### 2-3 OLS Model을 활용한 아웃라이어 결정 및 변수 선정
+### 3-3 Determination of outliers and variables using OLS model
+#### OLS (Ordinary least squares ) :  
+OLS is a method for estimating the unknown parameters in a linear regression model. OLS chooses the parameters of a linear function of a set of explanatory variables by minimizing the sum of the squares of the differences between the observed dependent variable (values of the variable being predicted) in the given dataset and those predicted by the linear function. 
 
-#### 2-3-1 정량적 변수 (Numerical Features) 사용
+#### 3-3-1 Model by all numerical Features
 
 
 ```python
-# Train, Test 데이터 준비
+# Prepare train and test set
 train = all_data[:ntrain]
 test = all_data[ntrain:]
 
-# add_constant란 함수를 이용 전체값에 1인 열을 추가 
+# Add_constant 
 train = sm.add_constant(train)
 train.tail()
 ```
@@ -1311,17 +1357,17 @@ train.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -1481,32 +1527,31 @@ train.tail()
 
 
 ```python
-#Numerical features로 train 데이터 만들기
+# Create train data with numerical features
 train_n = train[numerical_features]
 
-#Numerical features로 이루어진 데이터 중 Id와 SalePrice를 제외시킴
+# Drop Id and SalePrice of data with numerical features
 train_n = train_n.drop(['Id', 'SalePrice'], axis=1)
 
-#SalePrice에 로그를 적용해서 정규화진행
+# Normalization by applying log to SalePrice
 y_train_l = np.log1p(y_train_d)
 ```
 
 
 ```python
-#OLS 모델에 적용 후 model1_1으로 저장
+# Apply to OLS model and save as model1_1
 model1_1 = sm.OLS(y_train_l, train_n)
 result1_1 = model1_1.fit()
-# print(result1_1.summary())
 ```
 
-#### 2-3-2 정성적 변수 (Categorical Features) 사용
+#### 3-3-2 Model by all categorical Features
 
 
 ```python
-#Utilities은 제외함
+# Excludes Utilities
 categorical_features = ['MSSubClass', 'MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour', 'LotConfig', 'LandSlope', 'Neighborhood', 'Condition1', 'Condition2', 'BldgType', 'HouseStyle', 'RoofStyle', 'RoofMatl', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'ExterQual', 'ExterCond', 'Foundation', 'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2', 'Heating', 'HeatingQC', 'CentralAir', 'Electrical', 'KitchenQual', 'Functional', 'FireplaceQu', 'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond', 'PavedDrive', 'PoolQC', 'Fence', 'MiscFeature', 'SaleType', 'SaleCondition']
 
-#Categorical features로 이뤄진 데이터를 더미로 변환
+# Convert data from categorical features into dummies
 train_c = pd.get_dummies(train[categorical_features])
 train_c.tail()
 ```
@@ -1515,17 +1560,17 @@ train_c.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -1685,17 +1730,16 @@ train_c.tail()
 
 
 ```python
-#OLS 모델에 적용 후 model1_2으로 저장
+# Apply to OLS model and save as model1_2
 model1_2 = sm.OLS(y_train_l, train_c)
 result1_2 = model1_2.fit()
-# print(result1_2.summary())
 ```
 
-#### 2-3-3 정량적 변수와  정성적 변수를 함께 사용
+#### 3-3-3 Model by numerical and categorical features together
 
 
 ```python
-#정량적 데이터와 정성적(더미) 데이터를 결합
+# Concatenate numerical and categorical(dummy) data
 train_all = pd.concat([train_n, train_c], axis=1)
 train_all.tail()
 ```
@@ -1704,17 +1748,17 @@ train_all.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -1874,23 +1918,22 @@ train_all.tail()
 
 
 ```python
-#OLS 모델에 적용 후 model1_3으로 저장
+# Apply to OLS model and save as model1_3
 model1_3 = sm.OLS(y_train_l, train_all)
 result1_3 = model1_3.fit()
-# print(result1_3.summary())
 ```
 
-#### 2-3-4 정량적 변수와 종속변수 (SalePrice)  상관계수 Top 14 사용
+#### 3-3-4 Model by high correlation coefficient numerical features with SalePrice (Top 14)
 
 
 ```python
-#상관계수가 높은 15개 정량적 변수 저장
+# Storing 14 numerical variables with high correlation coefficients
 cor_numerical_cols = ['OverallQual', 'GrLivArea', 'GarageCars', 'GarageArea',
        'TotalBsmtSF', '1stFlrSF', 'FullBath', 'TotRmsAbvGrd', 'YearBuilt',
        'YearRemodAdd', 'GarageYrBlt', 'MasVnrArea', 'Fireplaces',
        'BsmtFinSF1']
 
-#15개의 정량적 변수를 이용하여 데이터 만들기
+# Create data using 14 numerical variables
 train_nc = train[cor_numerical_cols]
 train_nc.tail()
 ```
@@ -1899,17 +1942,17 @@ train_nc.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2026,22 +2069,21 @@ train_nc.tail()
 
 
 ```python
-#OLS 모델에 적용 후 model1_4 로 저장
+# Apply to OLS model and save as model1_4
 model1_4 = sm.OLS(y_train_l, train_nc)
 result1_4 = model1_4.fit()
-# print(result1_4.summary())
 ```
 
-#### 2-3-5 상관계수가 높은 정량적 변수 14개와 정성적 변수 5개 사용
+#### 3-3-5 Model by high correlation coefficient numerical features (14 EA) and  categorical features (5 EA)
 
 
 ```python
-#정성적 변수 5개를 이용하여 데이터 만들기
+#  Create data using 5 categorical variables
 cor_categorical_cols = ['Neighborhood', 'ExterQual', 'KitchenQual',
        'BsmtQual', 'PoolQC']
 train_cc = train[cor_categorical_cols]
 
-#정량적 변수와 정성적 변수 결합
+# Concatenate numerical and categorical data
 train_all_c = pd.concat([train_nc, train_cc], axis=1)
 train_all_c.tail()
 ```
@@ -2050,17 +2092,17 @@ train_all_c.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2207,7 +2249,7 @@ train_all_c.tail()
 
 
 ```python
-#데이터를 더미 시킨 후 Constant변수 추가 
+# Dummy categorical data and add constant 
 train_all_c = pd.get_dummies(train_all_c)
 train_all_c = sm.add_constant(train_all_c)
 
@@ -2218,17 +2260,17 @@ train_all_c.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2388,26 +2430,27 @@ train_all_c.tail()
 
 
 ```python
-#OLS 모델에 적용 후 model1_5 로 저장
+# Apply to OLS model and save as model1_5
 model1_5 = sm.OLS(y_train_l, train_all_c)
 result1_5 = model1_5.fit()
-# print(result1_5.summary())
 ```
 
-#### 2-3-6 변수간 다중공선성과 분산분석 
+#### 3-3-6 Multi-collinearity and variance analysis between variables
 
-#### (1) 변수간 다중공선성
+#### (1) Multi-collinearity
 
- - 다중공선성(multicollinearity)란 독립 변수의 일부가 다른 독립 변수의 조합으로 표현될 수 있는 경우를 말하며, 독립변수들이 서로 독립이 아니라 상호상관관계가 강한 경우 발생함
- - 다중 공선성이 있으면 독립변수의 공분산 행렬의 조건수(conditional number)가 증가
- - 상호의존적인 독립변수를 선택하는 방법으로는 VIF(Variance Inflation Factor)를 사용하며 숫자가 높을수록 다른 변수에 의존적임을 알 수 있음
+ -  Multicollinearity refers to the case where a part of the independent variable can be represented by a combination of other independent variables. This occurs when the independent variables are not independent of each other but have strong mutual correlation.
+ -  If there is multicollinearity, the conditional number of the covariance matrix of the independent variable increases
+ - VIF (Variance Inflation Factor) is used as a method of selecting interdependent independent variables. It can be seen that the higher the number, the more dependent on other variables
  $$
  \text{VIF}_i = \frac{\sigma^2}{(n-1)\text{Var}[X_i]}\cdot \frac{1}{1-R_i^2}
  $$
 
 
 ```python
+# Create VIF dataframe
 vif = pd.DataFrame()
+
 vif["VIF Factor"] = [variance_inflation_factor(train_all_c.values, i) for i in range(train_all_c.values.shape[1])]
 vif["features"] = train_all_c.columns
 vif.sort_values("VIF Factor", ascending = True).head(20)
@@ -2417,17 +2460,17 @@ vif.sort_values("VIF Factor", ascending = True).head(20)
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2547,26 +2590,26 @@ vif.sort_values("VIF Factor", ascending = True).head(20)
 
 #### Comment :
 
-1. 정성적 변수 (Categorical Features) 제외하고 추출된 변수들 간의 다중공선성은 낮게 형성되어 있음 
+1. Multilinearity between variables extracted except for categorical features is low.
 
-#### (2) 정성적 변수 (Categorical Features)에 대한 분산 분석
+#### (2) Analysis of variance on categorical features
 
- - 분산 분석(ANOVA: Analysis of Variance)은 종속변수의 분산과 독립변수의 분산간의 관계를 사용하여 선형회귀분석의 성능을 평가하고자 하는 방법
- - 분산 분석은 서로 다른 두 개의 선형회귀분석의 성능 비교에 응용할 수 있으며 독립변수가 카테고리 변수인 경우 각 카테고리 값에 따른 영향을 정량적으로 분석하는데도 사용
- - TSS : 종속변수값의 움직임의 범위
- - ESS : 모형에서 나온 예측밧의 움직임의 범위
- - RSS : 잔차의 움직임의 범위, 즉 오차의 크기
+ - Analysis of variance (ANOVA) is a method to evaluate the performance of linear regression analysis using the relationship between the variance of dependent variables and the variance of independent variables
+ - The analysis of variance can be applied to the performance comparison of two different linear regression analyzes. It can also be used to quantitatively analyze the effect of each category value when the independent variable is a category variable
+ - TSS : Range of movement of dependent variable values
+ - ESS : Range of predictive bass movements from model
+ - RSS : The range of motion of residuals, that is the magnitude of the error
  
  $$
  \dfrac{\text{ESS}}{K-1} \div  \dfrac{\text{RSS}}{N-K} = \dfrac{R^2/(K-1)}{(1-R^2)/(N-K)} \sim F(K-1, N-K)
  $$
 
-- 분산 분석표
+- Variance analysis table
 ![image.png](attachment:image.png)
 
 
 ```python
-#Neighborhood
+# Anova test : Neighborhood 
 model_cat = sm.OLS.from_formula("SalePrice ~ C(Neighborhood)", data=train)
 sm.stats.anova_lm(model_cat.fit())
 ```
@@ -2575,17 +2618,17 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2624,7 +2667,7 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 ```python
-#ExterQual
+# Anova test : ExterQual
 model_cat = sm.OLS.from_formula("SalePrice ~ C(ExterQual)", data=train)
 sm.stats.anova_lm(model_cat.fit())
 ```
@@ -2633,17 +2676,17 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2682,7 +2725,7 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 ```python
-#KitchenQual
+# Anova test : KitchenQual
 model_cat = sm.OLS.from_formula("SalePrice ~ C(KitchenQual)", data=train)
 sm.stats.anova_lm(model_cat.fit())
 ```
@@ -2691,17 +2734,17 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2740,7 +2783,7 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 ```python
-#BsmtQual
+# Anova test : BsmtQual
 model_cat = sm.OLS.from_formula("SalePrice ~ C(BsmtQual)", data=train)
 sm.stats.anova_lm(model_cat.fit())
 ```
@@ -2749,17 +2792,17 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2798,7 +2841,7 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 ```python
-#PoolQC
+# Anova test : PoolQC
 model_cat = sm.OLS.from_formula("SalePrice ~ C(PoolQC)", data=train)
 sm.stats.anova_lm(model_cat.fit())
 ```
@@ -2807,17 +2850,17 @@ sm.stats.anova_lm(model_cat.fit())
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -2856,17 +2899,14 @@ sm.stats.anova_lm(model_cat.fit())
 
 #### Comments :
 
-1. 추출한 아웃라이어를 바탕으로 5가지 경우의 수를 만들어 모델1-1에 돌려봄
+1. Anova test shows that the five category variables are significant
 
-2. 성능을 비교한 결과 leverage와 cook's distance를 기준으로 한 아웃라이어를 사용
+#### 3-3-7 Comparison of model performance by using variables
 
-#### 2-3-6 변수사용별 성능비교
-
- 1) $R_{adj}^2$ 모델별 비교 
- - 선형 회귀 모형에서 독립 변수가 추가되면 결정 계수$( R^2 )$의 값은 항상 증가함
+ 1) $R_{adj}^2$ Performance
+ - In the linear regression model, the value of the coefficient of determination $( R^2 )$ always increases when an independent variable is added
  
- - 독립 변수 추가 효과를 상쇄하기위해 독립변수 갯수 K에 따라 결정 계수의 값을 조정하는 
-   계수가 $R^2$이며, 1에 가까울수록 좋은 모형이라고 할 수 있음
+ - The coefficient that adjusts the value of the decision coefficient according to the number of independent variables K to offset the effect of addition of independent variables. The closer to 1, the better the model 
 $$
 R_{adj}^2 = 1 - \frac{n-1}{n-K}(1-R^2) = \dfrac{(n-1)R^2 +1-K}{n-K}
 $$
@@ -2880,15 +2920,15 @@ print("result1_4.rsquared_adj :", result1_4.rsquared_adj)
 print("result1_5.rsquared_adj :", result1_5.rsquared_adj)
 ```
 
-    result1_1.rsquared_adj : 0.9998476791817901
-    result1_2.rsquared_adj : 0.8616798648653541
-    result1_3.rsquared_adj : 0.933226462089486
-    result1_4.rsquared_adj : 0.9998167761418959
-    result1_5.rsquared_adj : 0.8670104995429049
+    result1_1.rsquared_adj : 0.999847679182
+    result1_2.rsquared_adj : 0.861679864865
+    result1_3.rsquared_adj : 0.933226462089
+    result1_4.rsquared_adj : 0.999816776142
+    result1_5.rsquared_adj : 0.867010499543
 
 
-2) AIC (Akaike Information Criterion) 모델별 비교
- - AIC는 모형과 데이터의 확률 분포 사이의 Kullback-Leibler 수준을 가장 크게하며, 값이 작을수록 좋은 모형에 가깝움
+2) AIC (Akaike Information Criterion) Performance 
+ - The AIC maximizes the Kullback-Leibler level between the probability distribution of the model and the data, and the smaller the value, the closer to the good model
 
 $$
            \text{AIC} = -2\log L + 2K \
@@ -2904,15 +2944,15 @@ print("result1_4.aic :", result1_4.aic)
 print("result1_5.aic :", result1_5.aic)
 ```
 
-    result1_1.aic : -1393.3948796096442
-    result1_2.aic : -1214.717316394553
-    result1_3.aic : -2251.688475707482
-    result1_4.aic : -1142.3929660338258
-    result1_5.aic : -1430.768357672127
+    result1_1.aic : -1393.39487961
+    result1_2.aic : -1214.71731639
+    result1_3.aic : -2251.68847571
+    result1_4.aic : -1142.39296603
+    result1_5.aic : -1430.76835767
 
 
-3) BIC 모델별 비교
- - BIC는 데이터가 exponential family라는 가정하에 주어진 데이터에서 모형 likelihood를 측정하기 위한 값에서 유도되었으며, 값은 작을수록 좋은 모형에 가깝움
+3) BIC(Bayesian Information Criterion) Perfomance 
+ - BIC is derived from the value for measuring the model likelihood in the given data under the assumption that the data is an exponential family. The smaller the value, the closer to the good model
 
 $$
            \text{BIC} = -2\log L + K\log n\
@@ -2928,78 +2968,79 @@ print("result1_4.bic :", result1_4.bic)
 print("result1_5.bic :", result1_5.bic)
 ```
 
-    result1_1.bic : -1218.9505530244655
-    result1_2.bic : 1.1067779869947572
-    result1_3.bic : -861.4200547407556
-    result1_4.bic : -1068.3862820279924
-    result1_5.bic : -1155.886388507603
+    result1_1.bic : -1218.95055302
+    result1_2.bic : 1.106777987
+    result1_3.bic : -861.420054741
+    result1_4.bic : -1068.38628203
+    result1_5.bic : -1155.88638851
 
 
 #### Comment : 
 
-1. Adj. $R^2$: 모델 1과 4번째가 0.99로 가장 높고 비슷한 성능이 나옴
-2. AIC : 모델 1과 3번째가 낮게 나옴 
-3. BIC : 모델 1과 5번째가 낮게 나옴
-4. 결론적으로 앞으로의 모델 검증은 모델 1을 기준으로 검증해 나갈예정
+1. Adj. $R^2$: Models 1 and 4 are the highest with 0.99 and have similar performance
+2. AIC : Models 1 and 3 are low
+3. BIC : Models 1 and 3 are low
+4. In conclusion, future model verification will be based on model 1
 
 ![image.png](attachment:image.png)
 
-### 2-4 아웃라이어
+### 3-4 Outlier
 
-1) IQR (Interquartile Range)를 이용한 아웃라이어 선택
+1) Option1 : IQR (Interquartile Range)
 
- - IQR : 3사분위수(Q3)과 1사분위수(Q1)의 차이 (Q3 - Q1)
- - 박스-휘스커 플롯(Box-Whisker Plot) 외부 세로선은 1.5 X IQR 을 나타내며 그 선 바깥 점을 아웃라이어라고 함
+ - IQR : Difference between quartile (Q3) and quartile (Q1) (Q3 - Q1)
+ - Box-Whisker Plot outer vertical line represents 1.5 X IQR and the out-of-line point is called the outlier.
 
 
 ```python
-#IQR 아웃라이어 함수
+# IQR Outlier function
 def detect_outliers(data, feature):
     
     Q1 = np.percentile(data[feature], 25)
     Q3 = np.percentile(data[feature], 75)
     IQR = Q3 - Q1
+     
+     # Outer vertical line represents 1.5 X IQR   
+    outlier_length = 1.5 * IQR
         
-    outlier_lenth = 1.5 * IQR
-        
-    outliers = data[(data[feature] < Q1 - outlier_lenth) | (data[feature] > Q3 + outlier_lenth)].index.tolist()
+    outliers = data[(data[feature] < Q1 - outlier_length) | (data[feature] > Q3 + outlier_length)].index.tolist()
 
     return outliers
 ```
 
 
 ```python
-# GrLivArea, OverallQual, GarageArea 
+# Detect outlier from GrLivArea, OverallQual, GarageArea 
 GrLivArea_outliers = detect_outliers(train, "GrLivArea")
 OverallQual_outliers = detect_outliers(train, "OverallQual")
 GarageCars_outliers = detect_outliers(train, "GarageArea")
 ```
 
-2) 표준화 잔차(resid)를 이용한 아웃라이어 선택
+2) Option2 : Standardized resids
 
- - 잔차를 레버리지와 잔차의 표준 편차로 나누어 동일한 표준 편차를 가지도록 스케일링한 것을 표준화 잔차(standardized residual 또는 normalized residual 또는 studentized residual) 라고 함
+ - The residuals are divided by the standard deviation of the leverage and residuals and scaled to have the same standard deviation are called standardized residuals or normalized residuals
  
 $$ 
 r_i = \dfrac{e_i}{s\sqrt{1-h_{ii}}} 
 $$
 
- - StatsModels의 RegressionResult(선형회귀 결과)의 resid_pearson 속성을 이용하여 표준화 잔차를 확인할 수 있으며, 2~4 보다 크면 아웃라이어라 함
+ - The standardization residual using the resid_pearson property of the RegressionResult of StatsModels. If it is larger than 2 ~ 4, it is called outlier.
 
 
 ```python
-#model1_1에서 결과물에 대한 표준화 잔차 속성을 이용하여 2보다 큰 것을 아웃라이어로 지정
+# Model1_1 uses the standardized residual attribute for the output, and assigns an outlier larger than 2
 idx_r = np.where(result1_1.resid_pearson > 2)[0]
 ```
 
-3) Cook's Distance 이용한 아웃라이어 선택
+3) Option3 : Cook's Distance 
 
- - 레버리지와 잔차의 크기가 모두 커지면 Cook's Distance 또한 커짐 
+ - If both the leverage and the residual size increase, Cook's Distance also increases.
 
 $$ 
 D_i = \frac{r_i^2}{\text{RSS}}\left[\frac{h_{ii}}{(1-h_{ii})^2}\right]
 $$
 
- - Fox' Outlier Recommendation 은 Cook's Distance가 다음과 같은 기준값보다 클 때 아웃라이어로 판단
+ - Fox 'Outlier Recommendation is judged as an outlier when Cook's Distance is larger than the following reference value
  
  $$
  D_i > \dfrac{4}{N − K - 1}
@@ -3007,14 +3048,14 @@ $$
 
 
 ```python
-#model1_1에서 결과물에 대한 Fox' Outlier Recommendation 을 이용하여 아웃라이어로 지정
+# Designated outliers using Fox 'Outlier Recommendation on the output from model1_1
 influence = result1_1.get_influence()
 cooks_d2, pvals = influence.cooks_distance
 fox_cr = 4 / (len(y_train_l) - len(train_n.columns) - 1)
 idx_c = np.where(cooks_d2 > fox_cr)[0]
 ```
 
-4) 전체 아웃라이어 확인
+4) Check all outliers (option 1,2,3)
 
 
 ```python
@@ -3031,7 +3072,7 @@ print("\t")
 print("(IQR)GarageCars_outliers:", len(GarageCars_outliers),"개 \n", GarageCars_outliers)
 
 #제거하길 추천한 outliers(data description)
-recommended_outliers = [523, 898, 1298]
+# recommended_outliers = [523, 898, 1298]
 ```
 
     resid_outliers: 26 개 
@@ -3050,9 +3091,9 @@ recommended_outliers = [523, 898, 1298]
      [178, 224, 270, 317, 408, 581, 664, 718, 803, 825, 1061, 1087, 1142, 1184, 1190, 1228, 1241, 1268, 1298, 1350, 1417]
 
 
-5) 아웃라이어 집단의 조합
+5) Combination of outliers groups
 
- - IQR [ GrLivArea_outliers , OverallQual_outliers, GarageCars_outlier ] 아웃라이어
+ - IQR [ GrLivArea_outliers , OverallQual_outliers, GarageCars_outlier ] [used option1 outlier]
 
 
 ```python
@@ -3064,7 +3105,7 @@ print("IQR outliers :", len(IQR),"개 \n", IQR)
      [1024, 769, 1031, 1417, 523, 270, 1169, 1298, 1173, 1046, 1175, 533, 664, 408, 798, 1182, 1312, 1184, 803, 1061, 1190, 304, 1328, 178, 691, 185, 58, 825, 317, 1087, 961, 324, 197, 581, 583, 1350, 1353, 1228, 718, 1241, 608, 224, 231, 1386, 496, 1268, 118, 375, 1142, 635]
 
 
- - IQR2 [ GrLivArea_outliers,  GarageCars_outlier ] 아웃라이어
+ - IQR2 [ GrLivArea_outliers,  GarageCars_outlier ] [used option1 outlier]
 
 
 ```python
@@ -3076,7 +3117,7 @@ print("IQR2 outliers :", len(IQR2),"개 \n", IQR2)
      [1298, 803, 1268, 1142]
 
 
- - Resid & Cook distance 아웃라이어
+ - Resid & Cook distance [used option2 + option3 outlier]
 
 
 ```python
@@ -3088,7 +3129,7 @@ print("Resid_Cooks_distance :", len(resid_cooks ),"개 \n", resid_cooks)
      [1030, 523, 1298, 277, 1046, 1048, 30, 546, 803, 1059, 1062, 807, 1065, 810, 812, 1068, 1324, 48, 1075, 1080, 1337, 588, 335, 88, 346, 93, 608, 1386, 628, 375, 632, 378, 635, 125, 898, 1415, 907, 142, 1423, 144, 1170, 658, 916, 662, 151, 664, 153, 410, 666, 1432, 669, 1181, 1182, 1437, 681, 1453, 942, 431, 688, 178, 691, 181, 1211, 1216, 705, 197, 710, 968, 457, 970, 205, 462, 728, 473, 218, 738, 495]
 
 
- - Resid & Cook distance & IQR 아웃라이어
+ - IQR & Resid & Cook distance [combine option1 + option2 + option3 outlier]
 
 
 ```python
@@ -3102,55 +3143,55 @@ print("Resid_Cooks_IQR :", len(resid_cooks_IQR),"개 \n", resid_cooks_IQR)
 
 #### Comments :
 
-1. 추출한 아웃라이어를 바탕으로 5가지 경우의 수를 만들어 모델 1-1에 돌려봄
+1. Based on the selected outliers, create a number of 5 cases and turn them on Model_1.
 
-2. 성능을 비교한 결과 leverage와 cook's distance를 기준으로 한 아웃라이어를 사용
+2. As a result of comparing the performance, we used outlier based on resid and cook's distance
 
 ![image.png](attachment:image.png)
 
-### 2-6 데이터 전처리
+### 3-5 Data preprocessing
 
-#### 2-6-1 Numerical 변수 선정
-- select_1 : 모델 1-1의 결과값 중 P-value가 0.05이하인 변수를 선택
+#### 3-5-1 Select numerical variables
+- Numeric_variable_select_1 : Select the variable whose P-value is 0.05 or less among the result values of Model_1.
 
 
 ```python
-# 모형 1의 결과값 중 P-value가 0.05이하인 변수를 선택
+# A variable whose P-value is 0.05 or less among the result values of Model_1 are selected
 idx_t = np.where(result1_1.pvalues < 0.05)[0]
 p_values = idx_t.tolist()
 ```
 
 
 ```python
-#index 값을 컬럼 명으로 변경
+# Change index value to column name
 x_train_cols = train_n.columns.tolist()
 
-select_1 = []
+numeric_variable_select_1 = []
 
 for i in p_values:
-    select_1.append(x_train_cols[i])
+    numeric_variable_select_1.append(x_train_cols[i])
 ```
 
 
 ```python
-# None 값이 많고, scale 에러가 나는 PoolArea, 1stFlrArea 제외
-select_1 = ['LotArea', 'OverallQual', 'OverallCond', 'YearBuilt', 'YearRemodAdd', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'TotRmsAbvGrd', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'YrSold']
-print("모형 1의 결과값 중 P-value가 0.05이하 변수 갯수 :",len(select_1),"개\n\n", \
-      "모형 1의 결과값 중 P-value가 0.05이하 변수 :","\n",select_1)
+# Except for PoolArea, 1stFlrArea with many none values and scale error
+numeric_variable_select_1 = ['LotArea', 'OverallQual', 'OverallCond', 'YearBuilt', 'YearRemodAdd', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'TotRmsAbvGrd', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'YrSold']
+print("Variables Qty [The P-value of the result of Model_1 is less than 0.05] :",len(numeric_variable_select_1),"EA\n\n", \
+      "Variables [The P-value of the result of Model_1 is less than 0.05]  :","\n",numeric_variable_select_1)
 ```
 
-    모형 1의 결과값 중 P-value가 0.05이하 변수 갯수 : 18 개
+    Variables Qty [The P-value of the result of Model_1 is less than 0.05] : 18 EA
     
-     모형 1의 결과값 중 P-value가 0.05이하 변수 : 
+     Variables [The P-value of the result of Model_1 is less than 0.05]  : 
      ['LotArea', 'OverallQual', 'OverallCond', 'YearBuilt', 'YearRemodAdd', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'TotRmsAbvGrd', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'YrSold']
 
 
-- select_2 : select_1중 VIF factor를 기준으로 변수를 선택
+- Numeric_variable_select_2 : Select variable based on VIF factor during numeric_variable_select_1
 
 
 ```python
-# select 1의 VIF를 확인
-x_train_new = train[select_1]
+# Check VIF of numeric_variable_select_1
+x_train_new = train[numeric_variable_select_1]
 
 vif = pd.DataFrame()
 vif["VIF Factor"] = [variance_inflation_factor(x_train_new.values, i) for i in range(x_train_new.values.shape[1])]
@@ -3162,17 +3203,17 @@ vif.sort_values("VIF Factor", ascending = True)
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -3282,54 +3323,54 @@ vif.sort_values("VIF Factor", ascending = True)
 
 
 ```python
-# 다중공선성이 높은 TotRmsAbvGrd, Yearsold, YearRemodAdd 제외
-select_2 = ['LotArea', 'OverallCond', 'YearBuilt', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'OverallQual']
-print("다중공선성이 낮은 변수 갯수 :",len(select_2),"개\n\n", \
-"다중공선성이 낮은 변수 :","\n",select_2)
+# Except TotRmsAbvGrd, Yearsold, YearRemodAdd due to high multi-collinearity
+numeric_variable_select_2 = ['LotArea', 'OverallCond', 'YearBuilt', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'OverallQual']
+print("Number of variables with low multicollinearity :",len(numeric_variable_select_2),"EA\n\n", \
+"Variables with low multicollinearity :","\n",numeric_variable_select_2)
 ```
 
-    다중공선성이 낮은 변수 갯수 : 15 개
+    Number of variables with low multicollinearity : 15 EA
     
-     다중공선성이 낮은 변수 : 
+     Variables with low multicollinearity : 
      ['LotArea', 'OverallCond', 'YearBuilt', 'BsmtFinSF1', 'TotalBsmtSF', 'GrLivArea', 'BsmtFullBath', 'FullBath', 'KitchenAbvGr', 'Fireplaces', 'GarageCars', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'OverallQual']
 
 
-- select_3 : 상관계수가 높은 14개의 변수
+- numeric_variable_select_3 : 14 variables with high correlation coefficient
 
 
 ```python
-select_3 = ['OverallQual', 'GrLivArea', 'GarageCars', 'GarageArea', 'TotalBsmtSF', 'FullBath', 'YearBuilt', 'GarageYrBlt', 'MasVnrArea', 'Fireplaces', 'BsmtFinSF1']
-print("상관계수가 높은 변수 갯수 :",len(select_3),"개\n\n", \
-"상관계수가 높은 변수 :","\n",select_3)
+numeric_variable_select_3 = ['OverallQual', 'GrLivArea', 'GarageCars', 'GarageArea', 'TotalBsmtSF', 'FullBath', 'YearBuilt', 'GarageYrBlt', 'MasVnrArea', 'Fireplaces', 'BsmtFinSF1']
+print("Number of variables with high correlation coefficient :",len(numeric_variable_select_3),"EA\n\n", \
+"Variables with high correlation coefficient:","\n",numeric_variable_select_3)
 ```
 
-    상관계수가 높은 변수 갯수 : 11 개
+    Number of variables with high correlation coefficient : 11 EA
     
-     상관계수가 높은 변수 : 
+     Variables with high correlation coefficient: 
      ['OverallQual', 'GrLivArea', 'GarageCars', 'GarageArea', 'TotalBsmtSF', 'FullBath', 'YearBuilt', 'GarageYrBlt', 'MasVnrArea', 'Fireplaces', 'BsmtFinSF1']
 
 
-- select_4 : select_2와 select_3의 합집합 변수
+- numeric_variable_select_4 : The union variable of numeric_variable_select_2 and numeric_variable_select_3
 
 
 ```python
-select_4 = ['GarageYrBlt', 'GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'GarageArea', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
-print("select_2와 select_3의 합집합 변수 갯수 :",len(select_4),"개\n\n", \
-"select_2와 select_3의 합집합 변수 :","\n",select_4)
+numeric_variable_select_4= ['GarageYrBlt', 'GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'GarageArea', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
+print("Number of the union variable of numeric_variable_select_2 and numeric_variable_select_3 :",len(numeric_variable_select_4),"EA\n\n", \
+"The union variable of numeric_variable_select_2 and numeric_variable_select_3 :","\n",numeric_variable_select_4)
 ```
 
-    select_2와 select_3의 합집합 변수 갯수 : 18 개
+    Number of the union variable of numeric_variable_select_2 and numeric_variable_select_3 : 18 EA
     
-     select_2와 select_3의 합집합 변수 : 
+     The union variable of numeric_variable_select_2 and numeric_variable_select_3 : 
      ['GarageYrBlt', 'GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'GarageArea', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
 
 
-- select_5 : select_4중 VIF factor를 기준으로 변수를 선택
+- numeric_variable_select_5 : Select variable based on VIF factor among numeric_variable_select_4
 
 
 ```python
-# select 4의 VIF를 확인
-x_train_new = train_n[select_4]
+# Check VIF for numeric_variable_select_4
+x_train_new = train_n[numeric_variable_select_4]
 
 vif = pd.DataFrame()
 vif["VIF Factor"] = [variance_inflation_factor(x_train_new.values, i) for i in range(x_train_new.values.shape[1])]
@@ -3341,17 +3382,17 @@ vif.sort_values(by="VIF Factor", ascending=True)
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -3461,121 +3502,102 @@ vif.sort_values(by="VIF Factor", ascending=True)
 
 
 ```python
-# 다중공선상이 높은 GarageArea, GarageYrBlt 제외
-select_5 = ['GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
-print("select_4중 VIF factor 낮은 기준의 변수 갯수 :",len(select_5),"개\n\n", \
-"select_4중 VIF factor 낮은 기준의 변수 :","\n",select_5)
+# Except GarageArea, GarageYrBlt due to high multi-collinearity
+numeric_variable_select_5 = ['GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
+print("Number of variables with low VIF factor among numeric_variable_select_4 :",len(numeric_variable_select_5),"개\n\n", \
+"Variables with low VIF factor among numeric_variable_select_4 :","\n",numeric_variable_select_5)
 ```
 
-    select_4중 VIF factor 낮은 기준의 변수 갯수 : 16 개
+    Number of variables with low VIF factor among numeric_variable_select_4 : 16 개
     
-     select_4중 VIF factor 낮은 기준의 변수 : 
+     Variables with low VIF factor among numeric_variable_select_4 : 
      ['GarageCars', 'LotArea', 'YearBuilt', 'WoodDeckSF', 'MasVnrArea', 'KitchenAbvGr', 'TotalBsmtSF', 'BsmtFullBath', 'EnclosedPorch', 'ScreenPorch', 'BsmtFinSF1', 'Fireplaces', 'GrLivArea', 'FullBath', 'OverallQual', 'OverallCond']
 
 
-#### 2-6-2 categorical 변수 선정
-- select_c1 : 모델 1-5에서 사용한 상관계수가 높은 5개의 변수
+#### 3-5-2 Select categorical variables
+- Categorical_variable_select_1 : The 5 variables with high correlation coefficients used in Model_5, excluding PoolQC
 
 
 ```python
-# 'PoolQC'는 train 더미 클래스와 test 더미 클래스가 매치하지 않는 것이 존재하므로 제외
-select_c1 = ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual']
+categorical_variable_select_1 = ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual']
 
-print("상관계수가 높은 5개의 변수 갯수 :",len(select_c1),"개\n\n", \
-"상관계수가 높은 5개의 변수 :","\n",select_c1)
+print("Number of variables with high correlation coefficient :",len(categorical_variable_select_1),"EA\n\n", \
+"Variables with high correlation coefficient :","\n", categorical_variable_select_1)
 ```
 
-    상관계수가 높은 5개의 변수 갯수 : 4 개
+    Number of variables with high correlation coefficient : 4 EA
     
-     상관계수가 높은 5개의 변수 : 
+     Variables with high correlation coefficient : 
      ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual']
 
 
-- select_c2 : 모델 1-3의 결과값 중 P-value가 0.005이하인 변수를 선택
+- categorical_variable_select_2 : Select the variable whose P-value is less than 0.005 among the result values of Model_3.
 
 
 ```python
-idx_t2 = np.where(result1_3.pvalues < 0.005)[0]
-tvalues2 = idx_t2.tolist()
+# Excluding 'Condition2', 'RoofMatl', and 'Functional' in category variables
+categorical_variable_select_2 = ['MSZoning', 'Neighborhood']
+print("Number of variables [The P-value of the result of Model_3 is less than 0.05] :",len(categorical_variable_select_2),"EA\n\n", \
+"Variables [The P-value of the result of Model_3 is less than 0.05] :","\n",categorical_variable_select_2)
 ```
 
-
-```python
-x_train_cols2 = train_all.columns.tolist()
-
-select_c = []
-
-for i in tvalues2:
-    select_c.append(x_train_cols2[i])
-
-#카테고리 값 중 3개 이상 존재하는 값은 'MSZoning', 'Neighborhood', 'Condition2', 'RoofMatl', 'Functional
-```
-
-
-```python
-# 'Condition2', 'RoofMatl', 'Functional'는 train 더미 클래스와 test 더미 클래스가 매치하지 않는 것이 존재하므로 제외
-select_c2 = ['MSZoning', 'Neighborhood']
-print("P-value가 0.005이하인 변수 갯수 :",len(select_c2),"개\n\n", \
-"P-value가 0.005이하인 변수 :","\n",select_c2)
-```
-
-    P-value가 0.005이하인 변수 갯수 : 2 개
+    Number of variables [The P-value of the result of Model_3 is less than 0.05] : 2 EA
     
-     P-value가 0.005이하인 변수 : 
+     Variables [The P-value of the result of Model_3 is less than 0.05] : 
      ['MSZoning', 'Neighborhood']
 
 
-- select_c3 : select_c1와 select_c2의 합집합 변수
+- categorical_variable_select_3 : The union variable for categorical_variable_select_1 and categorical_variable_select_2
 
 
 ```python
-select_c3 = ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual', 'MSZoning']
-print("select_c1와 select_c2의 합집합 변수 갯수 :",len(select_c3),"개\n\n", \
-"select_c1와 select_c2의 합집합 변수 :","\n",select_c3)
+categorical_variable_select_3 = ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual', 'MSZoning']
+print("Number of the union variable for categorical_variable_select_1 and categorical_variable_select_2 :",len(categorical_variable_select_3),"EA\n\n", \
+"The union variable for categorical_variable_select_1 and categorical_variable_select_2 :","\n", categorical_variable_select_3)
 ```
 
-    select_c1와 select_c2의 합집합 변수 갯수 : 5 개
+    Number of the union variable for categorical_variable_select_1 and categorical_variable_select_2 : 5 EA
     
-     select_c1와 select_c2의 합집합 변수 : 
+     The union variable for categorical_variable_select_1 and categorical_variable_select_2 : 
      ['Neighborhood', 'ExterQual', 'KitchenQual', 'BsmtQual', 'MSZoning']
 
 
 #### Comment :
 
-1. numerical 변수를 먼저 돌려보고 성능을 비교함
+1. Turn numerical variables first and compare performance
 
-2. numerical 변수 중 가장 좋은 변수를 고정하고, 카테고리 변수를 추가하여 비교함
+2. Fix the best variable among the numerical variables, add the categorical variables, and compare
 
-3. select_1과 select_c3을 함께 돌린 성능이 가장 좋은 것으로 나옴
+3. Performance with numeric_variable_select_1 and categorical_variable_select_3 together turned out to be the best
 
 ![image.png](attachment:image.png)
 
-## 3. 모델링
+## 4. Model
 
-### 3-1 모델 입력데이터 
+### 4-1 Input data
 
 
 ```python
-# 변수 선택 후 아웃라이어 제거
-train_n = train_n[select_1]
+# Remove outliers after selecting variables
+train_n = train_n[numeric_variable_select_1]
 train_n = train_n.drop(resid_cooks)
 
-train_c = train[select_c3]
+train_c = train[categorical_variable_select_3]
 train_c = train_c.drop(resid_cooks)
 
-# numerical 변수 log 변환 
+# Numerical variable log conversion
 train_n = np.log1p(train_n)
 
 # numerical + categorical
 x_train_new = pd.concat([train_n, train_c], axis=1)
 
-# SalePrice 아웃라이어 제거
+# Remove SalePrice Outlier
 y_train_new = y_train_d.drop(resid_cooks)
 
-#SalePrice log 변환
+# SalePrice log conversion
 y_train_new = np.log1p(y_train_new)
 
-# #from_formula 사용 위해
+# Make data
 train_new = pd.concat([y_train_new, x_train_new], axis=1)
 train_new.tail()
 ```
@@ -3584,17 +3606,17 @@ train_new.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -3754,10 +3776,10 @@ train_new.tail()
 
 
 ```python
-#OSL 모델에 정량적 변수를 일괄적으로 스케일 처리하기위해 변수이름에 scale을 붙임
+# In the OSL model, a scale is added to the variable name 
 select_scale = []
 
-for num in select_1:
+for num in numeric_variable_select_1:
     x = "scale(" + num + ")"
     select_scale.append(x)
 
@@ -3774,10 +3796,10 @@ formula
 
 
 ```python
-#OSL 모델에 Categorical 변수를 일괄적으로 스케일 처리하기위해 변수이름에 scale을 붙임
+# To scale the categorical variables in the OSL model, add a scale to the variable name
 c_categorical = []
 
-for num in select_c3:
+for num in categorical_variable_select_3:
     x = "C(" + num + ")"
     c_categorical.append(x)
 
@@ -3792,13 +3814,13 @@ formula
 
 
 
-### 3-2 OLS 모델 
+### 4-2 OLS(Ordinary Least Square) Model
 
-#### 3-2-1 OLS 모델 만들기
+#### 4-2-1 Make OLS Model
 
 
 ```python
-#OLS모형에 입력데이터 넣기
+# Input data into OLS model
 model2_1 = sm.OLS.from_formula("SalePrice ~ scale(LotArea) + scale(OverallQual) + scale(OverallCond) + scale(YearBuilt) + scale(YearRemodAdd) + scale(BsmtFinSF1) + scale(TotalBsmtSF) + scale(GrLivArea) + scale(BsmtFullBath) + scale(FullBath) + scale(KitchenAbvGr) + scale(TotRmsAbvGrd) + scale(Fireplaces) + scale(GarageCars) + scale(WoodDeckSF) + scale(EnclosedPorch) + scale(ScreenPorch) + scale(YrSold)+C(Neighborhood) + C(ExterQual) + C(KitchenQual) + C(BsmtQual) + C(MSZoning)", data=train_new)
 result2_1 = model2_1.fit()
 print(result2_1.summary())
@@ -3809,8 +3831,8 @@ print(result2_1.summary())
     Dep. Variable:              SalePrice   R-squared:                       0.945
     Model:                            OLS   Adj. R-squared:                  0.942
     Method:                 Least Squares   F-statistic:                     403.6
-    Date:                Thu, 15 Mar 2018   Prob (F-statistic):               0.00
-    Time:                        14:56:58   Log-Likelihood:                 1405.0
+    Date:                Mon, 26 Mar 2018   Prob (F-statistic):               0.00
+    Time:                        21:13:50   Log-Likelihood:                 1405.0
     No. Observations:                1383   AIC:                            -2696.
     Df Residuals:                    1326   BIC:                            -2398.
     Df Model:                          56                                         
@@ -3893,22 +3915,22 @@ print("AIC :", result2_1.aic)
 print("BIC :", result2_1.bic)
 ```
 
-    rsquared_adj : 0.9422440647532248
-    AIC : -2695.91417780931
-    BIC : -2397.6895889044185
+    rsquared_adj : 0.942244064753
+    AIC : -2695.91417781
+    BIC : -2397.6895889
 
 
 #### Comments :
 
-1. $R_{adj}^2$ 값은 1에 가깝지만 잔차 정규성은 0이므로 정규화는 이루지 못함
-2. Numerical 변수의 P-Value는 0.05보다 적음으로 다 유의미한 변수임
-3. AIC와 BIC는 낮으면 좋다고 하지만 음수인 경우는 확인이 필요함 
+1. $R_{adj}^2$ value is close to 1 but residual normality does not represent normality
+2. The P-value of the numeric variable is less than 0.05, which is a significant variable.
+3. AIC and BIC should be low, but if negative, verification is required
 
-#### 3-2-2 ANOVA F-test
+#### 4-2-2 ANOVA F-test
 
-- ANOVA F검정은 각 독립변수의 중요도를 비교할 수 있음
-- 방법 : 전체 모형과 각 변수 하나만을 뺀 모형들의 성능을 비교하여 간접적으로 각 독립변수의 영향력을 측정
-- PR(>F)값이 낮으면 낮을 수록 중요도가 높음
+- ANOVA F test can compare the importance of each independent variables
+- Method : The influence of each independent variable is indirectly measured by comparing the performance of the model minus the whole model and only one of the variables.
+- The lower the value of PR (> F), the higher the importance
 
 
 ```python
@@ -3919,17 +3941,17 @@ sm.stats.anova_lm(result2_1, typ=2)
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -4119,18 +4141,19 @@ sm.stats.anova_lm(result2_1, typ=2)
 
 #### Comments :
 
-1. 모든 변수의 PR(>F)가 가장 낮은 GrLivArea(거실 넓이)가 집값에 가장 큰 영향을 주는 것을 알 수 있음
-2. 비교적 PR(>F)가 높은 TotRmsAbvGrd(방의 품질)은 집값에 영향이 작다는 것을 발견
+1. GrLivArea (living room width), which has the lowest PR (> F) of all variables, has the greatest influence on the house value
+2. TotRmsAbvGrd (room quality), which has a relatively high PR (> F), has a small effect on house values
 
-#### 3-2-3 RMSE
+#### 4-2-3 RMSE
 
- - statsmodels.tools.eval_measures.rmse를 이용하여 기존 SalePrice와 OLS로 예측한 SalePrice를 비교
+ - Use statsmodels.tools.eval_measures.rmse to compare actual SalePrice to SalePrice predicted by OLS
 
 
 ```python
-#Train 데이터의 SalePrice을 OLS 모형으로 예측하기
+# Drop SalePrice from dataframe
 train_new2 = train_new.drop(['SalePrice'], axis=1)
 
+# Predict train's Saleprice
 y_train_new2 = result2_1.predict(train_new2)
 y_train_new2 = np.exp(y_train_new2)
 y_train_new2 = np.array(y_train_new2)
@@ -4138,24 +4161,24 @@ y_train_new2 = np.array(y_train_new2)
 
 
 ```python
-#기존 Train 데이터의 SalePrice
+# Actual Saleprice 
 y_train_new_a = np.array(y_train_new)
 y_train_new = np.exp(y_train_new_a)
 
-#기존 SalePrice와 OLS로 예측한 SalePrice를 비교
+# Comparison of actual SalePrice and SalePrice predicted by OLS
 print("RMSE :", sm.tools.eval_measures.rmse(y_train_new, y_train_new2, axis=0))
 ```
 
-    RMSE : 17513.755921041346
+    RMSE : 17513.755921
 
 
-#### 3-2-4 잔차의 정규성 검정
+#### 4-2-4 Normalization of residuals
 
- - 확률론적 선형 회귀모형에 따르면 회귀분석에서 생기는 잔차 $e = y - \hat{w}^Tx$ 도 정규 분포를 따름
+ - According to the probabilistic linear regression model, the residuals in the regression analysis [$e = y - \hat{w}^Tx$] follow the normal distribution 
 
 
 ```python
-#OLS 모형의 잔차의 카이제곱과 p-value 확인
+# Check the chi-squared and p-value of the residuals of the OLS model
 test_norm = sms.omni_normtest(result2_1.resid)
 for xi in zip(['Chi^2', 'P-value'], test_norm):
     print("%-12s: %6.3f" % xi)
@@ -4167,33 +4190,33 @@ for xi in zip(['Chi^2', 'P-value'], test_norm):
 
 
 ```python
-#OLS 모형의 잔차를 QQ Plot으로 확인
+# Check the residual of OLS model with QQ Plot
 sp.stats.probplot(result2_1.resid, plot=plt)
 plt.show()
 ```
 
 
-![png](output_231_0.png)
+![png](output_224_0.png)
 
 
 #### Comments :
 
-1. OLS 모형의 잔차는 수치적으로는 정규성을 따르지 않지만, Probability Plot으로 봤을 경우, 거의 일직선에 가깝다는 것을 알 수 있음
+1. The residuals of the OLS model do not follow normality numerically, but if we look at the Probability Plot we can see that it is close to a straight line
 
-### 3-3 집값 예측하기
+### 4-3 Predict SalePrice
 
 
 ```python
-#test 데이터를 train 데이터의 정량적 변수를 이용하여 선택
-test_new = test[select_1]
+# Select test data using numerical variables
+test_new = test[numeric_variable_select_1]
 
-#test 데이터의 정량적 데이터의 정규화
+# Normalization of numerical data of test data
 test_new = np.log1p(test_new)
 
-#test 데이터를 train 데이터의 정성적 변수를 이용하여 선택
-test_new2 = test[select_c3]
+# Select test data using categorical variables
+test_new2 = test[categorical_variable_select_3]
 
-#선택한 test의 정량적 데이터와 정성적 데이터를 결합
+# combine the data
 test_new = pd.concat([test_new, test_new2], axis=1)
 test_new.tail()
 ```
@@ -4202,17 +4225,17 @@ test_new.tail()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -4372,36 +4395,96 @@ test_new.tail()
 
 
 ```python
-#OLS 모형에 가공한 test 데이터를 입력
+# Input test data processed in OLS model
 y_new = result2_1.predict(test_new)
 
-#예측된 test 데이터의 값을 Exponentional 하여 실제 가격으로 변환
+# Exponentional conversion of predicted test data values to actual prices
 y_new = np.exp(y_new)
 
-#제출용 csv파일에 예측 값을 기입하기 위해 array형식으로 변환
+# Converted to an array format to write predicted values to the csv file for submission
 y_new = np.array(y_new)
 print(y_new)
 ```
 
-    [120441.3726321  157334.66257513 183420.82669353 ... 179300.64692553
-     119813.25276318 213320.3132828 ]
+    [ 120441.3726321   157334.66257512  183420.82669352 ...,  179300.64692553
+      119813.25276318  213320.3132828 ]
 
 
 
 ```python
-#샘플 파일 불러오기
-submission = pd.read_csv("../Danny/Submit/sample_submission.csv")
+# Import sample file
+submission = pd.read_csv("../1_House_Price_Project_X/Submit/sample_submission.csv")
 
-#샘플 파일의 SalePrice에 예측 가격 기입
+# Write the predicted price in the SalePrice of the sample file
 submission["SalePrice"] = y_new
 
-#기입된 샘플파일 확인
+# Check the sample file that was written
 print(submission.shape)
 submission.head()
 ```
 
+    (1459, 2)
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1461</td>
+      <td>120441.372632</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1462</td>
+      <td>157334.662575</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1463</td>
+      <td>183420.826694</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1464</td>
+      <td>197570.965466</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1465</td>
+      <td>195688.650661</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
 
 ```python
-#csv 파일형식으로 출력
+# Output to csv file format
 submission.to_csv("1_submission.csv", index=False)
 ```
