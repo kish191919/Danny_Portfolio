@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">MySQLdb</span><span class="o">,</span> <span class="nn">pickle</span>
@@ -11789,27 +11789,29 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read local car_info popular </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read car_info from MySQL at Amazon Web Service Cloud </span>
 <span class="n">pw</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./Flask/models/pw.plk&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
 
 <span class="n">db</span> <span class="o">=</span> <span class="n">MySQLdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;13.125.22.6&quot;</span><span class="p">,</span>
     <span class="s2">&quot;root&quot;</span><span class="p">,</span>
     <span class="n">pw</span><span class="p">,</span>
     <span class="s2">&quot;used_car&quot;</span><span class="p">,</span>
     <span class="n">charset</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="c1"># SQL Query</span>
 <span class="n">SQL_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    SELECT *</span>
 <span class="s2">    FROM used_car;</span>
 <span class="s2">&quot;&quot;&quot;</span>
 
+<span class="c1"># Bring car information from MySQL into dataframe</span>
 <span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">SQL_QUERY</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
-<span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11822,7 +11824,7 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -11959,291 +11961,6 @@ div#notebook {
       <td>hendrickbmw</td>
       <td>32991</td>
     </tr>
-    <tr>
-      <th>5</th>
-      <td>5</td>
-      <td>2016</td>
-      <td>mercedes-benz gl 63 amg 4matic</td>
-      <td>mercedes-benz</td>
-      <td>gl</td>
-      <td>17582</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>auburn brown</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>19</td>
-      <td>global motorsports inc.</td>
-      <td>79895</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>6</td>
-      <td>2017</td>
-      <td>infiniti q50 3.0t premium</td>
-      <td>infiniti</td>
-      <td>q50</td>
-      <td>31736</td>
-      <td>26</td>
-      <td>1</td>
-      <td>platinum</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>18</td>
-      <td>hertz car  sales winston-salem</td>
-      <td>19998</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>7</td>
-      <td>2016</td>
-      <td>jeep compass latitude</td>
-      <td>jeep</td>
-      <td>compass</td>
-      <td>46644</td>
-      <td>25</td>
-      <td>1</td>
-      <td>granite</td>
-      <td>dark slate</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>90</td>
-      <td>hertz car  sales  orlando</td>
-      <td>11488</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>8</td>
-      <td>2008</td>
-      <td>subaru outback</td>
-      <td>subaru</td>
-      <td>outback</td>
-      <td>199532</td>
-      <td>29</td>
-      <td>1</td>
-      <td>gray</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>16</td>
-      <td>sharpmotors</td>
-      <td>3950</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>9</td>
-      <td>2016</td>
-      <td>tesla model x p90d</td>
-      <td>tesla</td>
-      <td>model</td>
-      <td>17342</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>1-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>96</td>
-      <td>bayshoreautomotive</td>
-      <td>104890</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>10</td>
-      <td>2004</td>
-      <td>bmw 645 ci</td>
-      <td>bmw</td>
-      <td>645</td>
-      <td>106334</td>
-      <td>31</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>creme beige</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>77</td>
-      <td>rdu auto sales</td>
-      <td>9995</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>11</td>
-      <td>2010</td>
-      <td>toyota tundra</td>
-      <td>toyota</td>
-      <td>tundra</td>
-      <td>212000</td>
-      <td>23</td>
-      <td>1</td>
-      <td>white</td>
-      <td>tan</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>6</td>
-      <td>motortime auto sales</td>
-      <td>11995</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>12</td>
-      <td>2016</td>
-      <td>chevrolet corvette z06</td>
-      <td>chevrolet</td>
-      <td>corvette</td>
-      <td>11124</td>
-      <td>28</td>
-      <td>1</td>
-      <td>beach</td>
-      <td>brownstone</td>
-      <td>8-speed</td>
-      <td>rwd</td>
-      <td>4</td>
-      <td>86</td>
-      <td>skylineimports</td>
-      <td>67900</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>13</td>
-      <td>2016</td>
-      <td>lexus gs f base</td>
-      <td>lexus</td>
-      <td>gs</td>
-      <td>30646</td>
-      <td>32</td>
-      <td>1</td>
-      <td>nebula</td>
-      <td>red</td>
-      <td>8-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>117</td>
-      <td>motorcarslouisiana</td>
-      <td>56900</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>14</td>
-      <td>2012</td>
-      <td>ram 1500 st</td>
-      <td>ram</td>
-      <td>1500</td>
-      <td>159272</td>
-      <td>20</td>
-      <td>1</td>
-      <td>true</td>
-      <td>dark slate medium</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>10</td>
-      <td>n &amp;  n  auto</td>
-      <td>10935</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>15</td>
-      <td>2008</td>
-      <td>honda cr-v ex-l</td>
-      <td>honda</td>
-      <td>cr-v</td>
-      <td>93043</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>gray</td>
-      <td>5-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>7</td>
-      <td>auto mart  of ohio</td>
-      <td>8995</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>16</td>
-      <td>2014</td>
-      <td>maserati ghibli s q4</td>
-      <td>maserati</td>
-      <td>ghibli</td>
-      <td>36037</td>
-      <td>31</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>15</td>
-      <td>creeksideauto</td>
-      <td>33495</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>17</td>
-      <td>2014</td>
-      <td>mercedes-benz cla 250 4matic</td>
-      <td>mercedes-benz</td>
-      <td>cla</td>
-      <td>40784</td>
-      <td>32</td>
-      <td>1</td>
-      <td>white</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>16990</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>18</td>
-      <td>2006</td>
-      <td>rolls-royce phantom vi base</td>
-      <td>rolls-royce</td>
-      <td>phantom</td>
-      <td>23050</td>
-      <td>32</td>
-      <td>1</td>
-      <td>gray</td>
-      <td>tan</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>105000</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>19</td>
-      <td>2015</td>
-      <td>mercedes-benz c 300</td>
-      <td>mercedes-benz</td>
-      <td>c</td>
-      <td>35286</td>
-      <td>32</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>23990</td>
-    </tr>
   </tbody>
 </table>
 </div>
@@ -12260,21 +11977,37 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/database.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Saving data to the database</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/database.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>brand_group = list(set(database["brand"]))
-model_group = list(set(database["model"]))
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Group by brand and model</span>
+<span class="n">brand_group</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">database</span><span class="p">[</span><span class="s2">&quot;brand&quot;</span><span class="p">]))</span>
+<span class="n">model_group</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">database</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brand_list</span> <span class="o">=</span> <span class="p">[]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Top 30 car brands</span>
+<span class="n">brand_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">brand</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">brand</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
     <span class="n">brand_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">brand</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
@@ -12289,7 +12022,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">idx_list</span> <span class="o">=</span> <span class="p">[]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the index of data not included in the top 30 car brands</span>
+<span class="n">idx_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train</span><span class="p">[</span><span class="s2">&quot;brand&quot;</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">brand_list</span><span class="p">:</span>
@@ -12304,43 +12038,11 @@ model_group = list(set(database["model"]))
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(4997, 16)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">idx_list</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Only the top 30 car brands are filtered</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">idx_list</span><span class="p">)</span>
 <span class="n">train</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -12354,8 +12056,7 @@ model_group = list(set(database["model"]))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Feature engineering</p>
-
+<h3 id="Feature-engineering">Feature engineering<a class="anchor-link" href="#Feature-engineering">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12364,7 +12065,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;brand&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select models and brands as category variables</span>
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;brand&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12377,7 +12079,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dummy_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Dummy category variable</span>
+<span class="n">dummy_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">])</span>
 <span class="n">dummy_cat</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -12575,7 +12278,9 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numerical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;miles&#39;</span><span class="p">,</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select year, miles, price by numeric variable</span>
+<span class="n">Select</span> <span class="n">by</span> <span class="n">numeric</span> <span class="n">variable</span>
+<span class="n">numerical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;miles&#39;</span><span class="p">,</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12588,7 +12293,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normalize_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">numerical_features</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Normalized numeric Variables</span>
+<span class="n">normalize_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">numerical_features</span><span class="p">])</span>
 <span class="n">normalize_num</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -12677,8 +12383,10 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pre_train = pd.merge(normalize_num, dummy_cat) </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Join numeric variable with categoric variable</span>
 <span class="n">X_train_0</span> <span class="o">=</span> <span class="n">normalize_num</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dummy_cat</span><span class="p">)</span>
+
+<span class="c1"># Seperate price as y value</span>
 <span class="n">y_train</span> <span class="o">=</span> <span class="n">X_train_0</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span>
 <span class="n">X_train</span> <span class="o">=</span> <span class="n">X_train_0</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -12688,17 +12396,27 @@ model_group = list(set(database["model"]))
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Model-:-XGBoost-Model">Model : XGBoost Model<a class="anchor-link" href="#Model-:-XGBoost-Model">&#182;</a></h3><p>XGBoost is short for “Extreme Gradient Boosting”, where the term “Gradient Boosting” is proposed in the paper Greedy Function Approximation: A Gradient Boosting Machine, by Friedman. XGBoost is based on this original model.</p>
+<p>XGBoost is used for supervised learning problems, where we use the training data (with multiple features) x to predict a target variable y. Before we dive into trees, let us start by reviewing the basic elements in supervised learning.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">xgboost</span> <span class="k">import</span> <span class="n">XGBRegressor</span>
-<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestRegressor</span><span class="p">,</span> <span class="n">ExtraTreesRegressor</span>
 <span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">KFold</span>
 
+<span class="c1"># K-ford : 10</span>
 <span class="n">k_fold</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2018</span><span class="p">)</span>
 <span class="n">X_train1</span><span class="p">,</span> <span class="n">X_test1</span><span class="p">,</span> <span class="n">y_train1</span><span class="p">,</span> <span class="n">y_test1</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </pre></div>
@@ -12732,7 +12450,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ml</span> <span class="o">=</span> <span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create XGBoost Regressor model</span>
+<span class="n">ml</span> <span class="o">=</span> <span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12745,8 +12464,8 @@ model_group = list(set(database["model"]))
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> score = cross_val_score(ml, X_train, y_train, cv=k_fold, n_jobs=-1, scoring=&quot;r2&quot;).mean()
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the corss validation score</span>
+<span class="o">%</span><span class="k">time</span> score = cross_val_score(ml, X_train, y_train, cv=k_fold, n_jobs=-1, scoring=&quot;r2&quot;).mean()
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score = </span><span class="si">{0:.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">score</span><span class="p">))</span>
 </pre></div>
 
@@ -12780,9 +12499,13 @@ Score = 0.83457
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ml</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train1</span><span class="p">,</span> <span class="n">y_train1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Train model</span>
+<span class="n">ml</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train1</span><span class="p">,</span> <span class="n">y_train1</span><span class="p">)</span>
+
+<span class="c1"># Predict test data set</span>
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test1</span><span class="p">)</span>
 
+<span class="c1"># Drawing regression graph</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_test1</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Predicted vs. Actual&#39;</span><span class="p">)</span>
@@ -14098,7 +13821,8 @@ height=349
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/model.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the model to the pickle file</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/model.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -14111,7 +13835,10 @@ height=349
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">actual_car_info</span> <span class="o">=</span> <span class="n">train</span><span class="p">[[</span><span class="s2">&quot;brand&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;miles&quot;</span><span class="p">,</span><span class="s2">&quot;price&quot;</span><span class="p">]]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set up a dataset using &quot;brand&quot;, &quot;model&quot;, &quot;year&quot;, &quot;miles&quot;, &quot;price&quot;</span>
+<span class="n">actual_car_info</span> <span class="o">=</span> <span class="n">train</span><span class="p">[[</span><span class="s2">&quot;brand&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span><span class="s2">&quot;year&quot;</span><span class="p">,</span><span class="s2">&quot;miles&quot;</span><span class="p">,</span><span class="s2">&quot;price&quot;</span><span class="p">]]</span>
+
+<span class="c1"># Save the dataset to the pickle file</span>
 <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">actual_car_info</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/actual_car_info.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 </pre></div>
 
@@ -14120,12 +13847,21 @@ height=349
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Enter-Used-Car-information">Enter Used Car information<a class="anchor-link" href="#Enter-Used-Car-information">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brand</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;brand: &quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Enter the information of the vehicle you want to know about the estimated price of used car</span>
+<span class="n">brand</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;brand: &quot;</span><span class="p">))</span>
 <span class="n">model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;model: &quot;</span><span class="p">))</span>
 <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;year: &quot;</span><span class="p">))</span>
 <span class="n">miles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;miles: &quot;</span><span class="p">))</span>
@@ -14162,7 +13898,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_train1</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the variable column used to train the model as a data frame</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_train1</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -14175,7 +13912,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">X_train1</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/column.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the variable column to the pickle file</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">X_train1</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/column.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -14188,12 +13926,13 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cdx</span> <span class="o">=</span> <span class="mi">0</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the index location of the selected used car brand in the variable column data frame</span>
+<span class="n">brand_index</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s1">&#39;brand&#39;</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">brand</span><span class="p">:</span>
         <span class="k">break</span><span class="p">;</span>
-    <span class="n">cdx</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="n">cdx</span>
+    <span class="n">brand_index</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">brand_index</span>
 </pre></div>
 
 </div>
@@ -14226,12 +13965,13 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sdx</span> <span class="o">=</span> <span class="mi">0</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the index location of the selected used car model in the variable column data frame</span>
+<span class="n">model_index</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s1">&#39;model&#39;</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">model</span><span class="p">:</span>
         <span class="k">break</span><span class="p">;</span>
-    <span class="n">sdx</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="n">sdx</span>
+    <span class="n">model_index</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">model_index</span>
 </pre></div>
 
 </div>
@@ -14264,7 +14004,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">target_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Array of zeros</span>
+<span class="n">target_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -14277,7 +14018,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">target_list</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/target_list.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the target_list to pickle file</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">target_list</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./Flask/models/target_list.plk&quot;</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -14290,8 +14032,11 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">target_list</span><span class="p">[</span><span class="n">cdx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">target_list</span><span class="p">[</span><span class="n">sdx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Put the number 1 in the selected brand and model locations in the data frame</span>
+<span class="n">target_list</span><span class="p">[</span><span class="n">brand_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">target_list</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Put the year and miles in the data frame</span>
 <span class="n">target_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">year</span>
 <span class="n">target_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">miles</span>
 </pre></div>
@@ -14306,7 +14051,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Insert data into target data frame </span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">target</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_list</span>
 </pre></div>
 
@@ -14421,7 +14167,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">numerical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;miles&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Nomalizing numerical features</span>
+<span class="n">numerical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;miles&#39;</span><span class="p">]</span>
 <span class="n">target</span><span class="p">[</span><span class="n">numerical_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">numerical_features</span><span class="p">])</span>
 </pre></div>
 
@@ -14531,12 +14278,21 @@ miles: 30000
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Predict-Used_Car-Values">Predict Used_Car Values<a class="anchor-link" href="#Predict-Used_Car-Values">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">price_log</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Predicted logged price</span>
+<span class="n">price_log</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14582,7 +14338,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">price_log</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Revert the logged price back to its original price</span>
+<span class="n">price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">price_log</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Price:&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">price</span><span class="p">))</span>
 </pre></div>
 
@@ -14609,12 +14366,21 @@ miles: 30000
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compare-same-model-with-different-years">Compare same model with different years<a class="anchor-link" href="#Compare-same-model-with-different-years">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">same_model</span> <span class="o">=</span> <span class="n">actual_car_info</span><span class="p">[</span><span class="n">actual_car_info</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">model</span><span class="p">]</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Find the average of the same model for each year</span>
+<span class="n">same_model</span> <span class="o">=</span> <span class="n">actual_car_info</span><span class="p">[</span><span class="n">actual_car_info</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">model</span><span class="p">]</span> 
 <span class="n">year_price</span> <span class="o">=</span> <span class="n">same_model</span><span class="p">[[</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;price&quot;</span><span class="p">]]</span>
 <span class="n">year_price_list</span> <span class="o">=</span> <span class="n">year_price</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;price&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">})</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 <span class="n">year_price_list</span> <span class="o">=</span> <span class="n">year_price_list</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
@@ -14710,7 +14476,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert year from number type to character type</span>
+<span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14723,7 +14490,8 @@ miles: 30000
 <div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert price from number type to character type</span>
+<span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_price_list</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
 </pre></div>
 
 </div>

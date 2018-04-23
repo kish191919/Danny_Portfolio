@@ -11771,6 +11771,14 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Import-modules">Import modules<a class="anchor-link" href="#Import-modules">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -11797,47 +11805,69 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Crawling-data-from-Cars.com">Crawling data from Cars.com<a class="anchor-link" href="#Crawling-data-from-Cars.com">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s1">&#39;brand&#39;</span><span class="p">,</span><span class="s1">&#39;model&#39;</span><span class="p">,</span><span class="s1">&#39;miles&#39;</span><span class="p">,</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span><span class="s1">&#39;video&#39;</span><span class="p">,</span><span class="s1">&#39;exterior_color&#39;</span><span class="p">,</span><span class="s1">&#39;interior_color&#39;</span><span class="p">,</span><span class="s1">&#39;transmission&#39;</span><span class="p">,</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">,</span><span class="s1">&#39;star&#39;</span><span class="p">,</span><span class="s1">&#39;review_no&#39;</span><span class="p">,</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span><span class="s1">&#39;price&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a data frame to store crawling data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s1">&#39;brand&#39;</span><span class="p">,</span><span class="s1">&#39;model&#39;</span><span class="p">,</span><span class="s1">&#39;miles&#39;</span><span class="p">,</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span><span class="s1">&#39;video&#39;</span><span class="p">,</span><span class="s1">&#39;exterior_color&#39;</span><span class="p">,</span><span class="s1">&#39;interior_color&#39;</span><span class="p">,</span><span class="s1">&#39;transmission&#39;</span><span class="p">,</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">,</span><span class="s1">&#39;star&#39;</span><span class="p">,</span><span class="s1">&#39;review_no&#39;</span><span class="p">,</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span><span class="s1">&#39;price&#39;</span><span class="p">])</span>
 
+<span class="c1"># Getting data from cars.com</span>
 <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">51</span><span class="p">):</span>
+    <span class="c1"># Cars.com URL</span>
     <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.cars.com/for-sale/searchresults.action/?page=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&amp;perPage=100&amp;rd=99999&amp;searchSource=PAGINATION&amp;showMore=true&amp;sort=relevance&amp;stkTypId=28881&amp;zc=31216&#39;</span>
 
+    <span class="c1"># Requesting data </span>
     <span class="n">sauce</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    
+    <span class="c1"># Parsing data with lxml</span>
     <span class="n">soup</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">sauce</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
-
+    
+    <span class="c1"># All of the data comes with listing-row__details as the class name</span>
     <span class="n">specificSoup</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;listing-row__details&#39;</span><span class="p">)</span>
 
     
-
+    <span class="c1"># Put the imported data in the data frame</span>
     <span class="k">for</span> <span class="n">div</span> <span class="ow">in</span> <span class="n">specificSoup</span><span class="p">:</span>
+        
+        <span class="c1"># Put information about the name of the car in the name variable</span>
         <span class="n">name_index</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;h2&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span><span class="s1">&#39;cui-delta listing-row__title&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-    
+        <span class="c1"># Get only the car&#39;s year out of the car information in the name variable</span>
         <span class="n">year_index</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;[0-9]</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">year</span> <span class="o">=</span> <span class="n">year_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
+        <span class="c1"># Get only the car&#39;s title out of the car information in the name variable</span>
         <span class="n">title_index</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">29</span><span class="p">:</span><span class="mi">34</span><span class="p">]</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">title_index</span><span class="p">)</span>
 
+        <span class="c1"># Get the car&#39;s brand out of the car information in the title variable</span>
         <span class="n">brand</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        
+       
+        <span class="c1"># If there hasn&#39;t model information, brand will be as a model</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">brand</span>
 
+        <span class="c1"># The miles of the car </span>
         <span class="n">mile_index</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__mileage&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="n">miles</span> <span class="o">=</span> <span class="n">mile_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;\d+&quot;</span><span class="p">)</span>
         <span class="n">miles</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">miles</span><span class="p">)</span> 
         <span class="n">miles</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">miles</span><span class="p">)</span>
 
+        <span class="c1"># The vendor information</span>
         <span class="n">vendor_index</span> <span class="o">=</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__dealer-name listing-row__dealer-name-mobile&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="n">vendor_group</span> <span class="o">=</span> <span class="n">vendor_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 
@@ -11847,21 +11877,25 @@ div#notebook {
             <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span> <span class="n">vendor</span> <span class="o">+=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span> <span class="n">vendor</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span><span class="o">+</span> <span class="n">i</span> <span class="o">+</span><span class="s2">&quot; &quot;</span>
 
+        <span class="c1"># Number of photos</span>
         <span class="n">photos_index</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;media-count shadowed&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="n">photos</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;[0-9]{1,3}&#39;</span><span class="p">,</span><span class="n">photos_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
+        <span class="c1"># Number of video</span>
         <span class="n">video_index</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;media-count shadowed&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="k">try</span><span class="p">:</span> 
             <span class="n">video</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;[0-9]{1,3}&#39;</span><span class="p">,</span><span class="n">photos_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">video</span> <span class="o">=</span> <span class="mi">0</span>
 
+        <span class="c1"># Exterior color</span>
         <span class="n">exterior_color</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__meta&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">exterior_color</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">exterior_color</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">exterior_color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
         
+        <span class="c1"># Interior color</span>
         <span class="n">interior_color</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__meta&#39;</span><span class="p">})</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">interior_color</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">interior_color</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
@@ -11870,13 +11904,14 @@ div#notebook {
         <span class="n">interior_color</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">interior_color</span><span class="p">)</span>
         <span class="n">interior_color</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;/&#39;</span> <span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="p">,</span><span class="n">interior_color</span><span class="p">)</span>
 
+        <span class="c1"># Transmission type</span>
         <span class="n">transmission</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__meta&#39;</span><span class="p">})</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">transmission</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">transmission</span><span class="p">)[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">transmission</span> <span class="o">=</span> <span class="s2">&quot;6-speed&quot;</span>
-            
-
+        
+        <span class="c1"># Drivetrain type</span>
         <span class="n">drivetrain</span> <span class="o">=</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__meta&#39;</span><span class="p">})</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">drivetrain</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">drivetrain</span><span class="p">)[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
@@ -11890,7 +11925,7 @@ div#notebook {
         <span class="k">elif</span> <span class="n">drivetrain</span> <span class="o">==</span> <span class="s1">&#39;all wheel drive&#39;</span><span class="p">:</span>
             <span class="n">drivetrain</span> <span class="o">=</span> <span class="s1">&#39;4wd&#39;</span>
 
-
+        <span class="c1"># Number of star</span>
         <span class="k">if</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;dealer-rating-stars&#39;</span><span class="p">})</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">star</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -11899,13 +11934,14 @@ div#notebook {
             <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;\d&quot;</span><span class="p">)</span>
             <span class="n">star</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">star</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> 
 
-        
+        <span class="c1"># Number of review</span>
         <span class="k">if</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__review-number&#39;</span><span class="p">})</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">review_no</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">review_index</span> <span class="o">=</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__review-number&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span>
             <span class="n">review_no</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">review_index</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
 
+        <span class="c1"># Car price</span>
         <span class="k">if</span> <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;listing-row__price&#39;</span><span class="p">})</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">price</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -11916,7 +11952,7 @@ div#notebook {
             <span class="n">price</span>
 
 
-
+        <span class="c1"># Entering crawled data into a data frame</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span> 
                 <span class="s1">&#39;year&#39;</span> <span class="p">:</span> <span class="n">year</span><span class="p">,</span>
                 <span class="s1">&#39;title&#39;</span> <span class="p">:</span> <span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
@@ -11938,7 +11974,7 @@ div#notebook {
 
 
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)]</span> <span class="o">=</span> <span class="n">data</span>
-        
+<span class="c1"># Data Preprocessing   </span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;6-speed&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;automatic&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;6&#39;</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;8-speed&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;8&#39;</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;transmission&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;5-speed&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;5&#39;</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>   
@@ -11951,7 +11987,7 @@ div#notebook {
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;fwd&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;2wd&#39;</span> <span class="ow">or</span> <span class="n">x</span><span class="o">==</span><span class="s1">&#39;f w d&#39;</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;drivetrain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;4wd&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s1">&#39;fwd&#39;</span> <span class="ow">and</span>  <span class="n">x</span><span class="o">!=</span><span class="s1">&#39;rwd&#39;</span> <span class="ow">and</span> <span class="n">x</span><span class="o">!=</span><span class="s1">&#39;4wd&#39;</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
 
-<span class="n">df</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11964,7 +12000,7 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[13]:</div>
+<div class="prompt output_prompt">Out[2]:</div>
 
 
 
@@ -12007,1105 +12043,96 @@ div#notebook {
   <tbody>
     <tr>
       <th>0</th>
-      <td>2003</td>
-      <td>mazda tribute lx v6</td>
-      <td>mazda</td>
-      <td>tribute</td>
-      <td>118205</td>
-      <td>21</td>
+      <td>2017</td>
+      <td>nissan gt-r premium</td>
+      <td>nissan</td>
+      <td>gt-r</td>
+      <td>7365</td>
+      <td>32</td>
       <td>1</td>
-      <td>silver</td>
-      <td>gray</td>
-      <td>4-speed</td>
-      <td>fwd</td>
+      <td>orange</td>
+      <td>orange</td>
+      <td>6-speed</td>
+      <td>4wd</td>
       <td>5</td>
-      <td>43</td>
-      <td>1st choice autos</td>
-      <td>3750</td>
+      <td>7</td>
+      <td>nexus auto brokers</td>
+      <td>89900</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2016</td>
-      <td>subaru crosstrek 2.0i</td>
-      <td>subaru</td>
-      <td>crosstrek</td>
-      <td>26525</td>
-      <td>23</td>
+      <td>2017</td>
+      <td>nissan gt-r premium</td>
+      <td>nissan</td>
+      <td>gt-r</td>
+      <td>6232</td>
+      <td>32</td>
       <td>1</td>
-      <td>desert</td>
       <td>black</td>
-      <td>5-speed</td>
+      <td>orange</td>
+      <td>6-speed</td>
       <td>4wd</td>
       <td>5</td>
-      <td>43</td>
-      <td>1st choice autos</td>
-      <td>17999</td>
+      <td>7</td>
+      <td>nexus auto brokers</td>
+      <td>89900</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2018</td>
-      <td>ford f-150 raptor</td>
-      <td>ford</td>
-      <td>f-150</td>
-      <td>2330</td>
-      <td>32</td>
+      <td>2017</td>
+      <td>nissan gt-r premium</td>
+      <td>nissan</td>
+      <td>gt-r</td>
+      <td>2589</td>
+      <td>26</td>
       <td>1</td>
-      <td>race</td>
-      <td>black</td>
-      <td>10-speed</td>
+      <td>blue</td>
+      <td>orange</td>
+      <td>6-speed</td>
       <td>4wd</td>
       <td>5</td>
-      <td>244</td>
-      <td>gilbert &amp;  baugh ford</td>
-      <td>53900</td>
+      <td>7</td>
+      <td>nexus auto brokers</td>
+      <td>89900</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>2015</td>
-      <td>lexus rc f</td>
-      <td>lexus</td>
-      <td>rc</td>
-      <td>27080</td>
-      <td>23</td>
+      <td>2010</td>
+      <td>bmw 328 i</td>
+      <td>bmw</td>
+      <td>328</td>
+      <td>95705</td>
+      <td>28</td>
       <td>1</td>
       <td>black</td>
-      <td>red</td>
-      <td>8-speed</td>
+      <td>black</td>
+      <td>6-speed</td>
       <td>rwd</td>
       <td>5</td>
-      <td>6</td>
-      <td>carmax south boulevard</td>
-      <td>43998</td>
+      <td>24</td>
+      <td>burnoutgarage</td>
+      <td>10995</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>2014</td>
-      <td>mercedes-benz s 550</td>
-      <td>mercedes-benz</td>
-      <td>s</td>
-      <td>121078</td>
-      <td>32</td>
-      <td>1</td>
-      <td>palladium</td>
-      <td>silk beige</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>939</td>
-      <td>hendrickbmw</td>
-      <td>32991</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>2016</td>
-      <td>mercedes-benz gl 63 amg 4matic</td>
-      <td>mercedes-benz</td>
-      <td>gl</td>
-      <td>17582</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>auburn brown</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>19</td>
-      <td>global motorsports inc.</td>
-      <td>79895</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>2017</td>
-      <td>infiniti q50 3.0t premium</td>
-      <td>infiniti</td>
-      <td>q50</td>
-      <td>31736</td>
-      <td>26</td>
-      <td>1</td>
-      <td>platinum</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>18</td>
-      <td>hertz car  sales winston-salem</td>
-      <td>19998</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>2016</td>
-      <td>jeep compass latitude</td>
-      <td>jeep</td>
-      <td>compass</td>
-      <td>46644</td>
-      <td>25</td>
-      <td>1</td>
-      <td>granite</td>
-      <td>dark slate</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>90</td>
-      <td>hertz car  sales  orlando</td>
-      <td>11488</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>2008</td>
-      <td>subaru outback</td>
-      <td>subaru</td>
-      <td>outback</td>
-      <td>199532</td>
-      <td>29</td>
-      <td>1</td>
-      <td>gray</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>16</td>
-      <td>sharpmotors</td>
-      <td>3950</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>2016</td>
-      <td>tesla model x p90d</td>
-      <td>tesla</td>
-      <td>model</td>
-      <td>17342</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>1-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>96</td>
-      <td>bayshoreautomotive</td>
-      <td>104890</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>2004</td>
-      <td>bmw 645 ci</td>
-      <td>bmw</td>
-      <td>645</td>
-      <td>106334</td>
-      <td>31</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>creme beige</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>77</td>
-      <td>rdu auto sales</td>
-      <td>9995</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>2010</td>
-      <td>toyota tundra</td>
-      <td>toyota</td>
-      <td>tundra</td>
-      <td>212000</td>
-      <td>23</td>
-      <td>1</td>
-      <td>white</td>
-      <td>tan</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>6</td>
-      <td>motortime auto sales</td>
-      <td>11995</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>2016</td>
-      <td>chevrolet corvette z06</td>
-      <td>chevrolet</td>
-      <td>corvette</td>
-      <td>11124</td>
-      <td>28</td>
-      <td>1</td>
-      <td>beach</td>
-      <td>brownstone</td>
-      <td>8-speed</td>
-      <td>rwd</td>
-      <td>4</td>
-      <td>86</td>
-      <td>skylineimports</td>
-      <td>67900</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>2016</td>
-      <td>lexus gs f base</td>
-      <td>lexus</td>
-      <td>gs</td>
-      <td>30646</td>
-      <td>32</td>
-      <td>1</td>
-      <td>nebula</td>
-      <td>red</td>
-      <td>8-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>117</td>
-      <td>motorcarslouisiana</td>
-      <td>56900</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>2012</td>
-      <td>ram 1500 st</td>
-      <td>ram</td>
-      <td>1500</td>
-      <td>159272</td>
-      <td>20</td>
-      <td>1</td>
-      <td>true</td>
-      <td>dark slate medium</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>10</td>
-      <td>n &amp;  n  auto</td>
-      <td>10935</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>2008</td>
-      <td>honda cr-v ex-l</td>
-      <td>honda</td>
-      <td>cr-v</td>
-      <td>93043</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>gray</td>
-      <td>5-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>7</td>
-      <td>auto mart  of ohio</td>
-      <td>8995</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>2014</td>
-      <td>maserati ghibli s q4</td>
-      <td>maserati</td>
-      <td>ghibli</td>
-      <td>36037</td>
-      <td>31</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>15</td>
-      <td>creeksideauto</td>
-      <td>33495</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>2014</td>
-      <td>mercedes-benz cla 250 4matic</td>
-      <td>mercedes-benz</td>
-      <td>cla</td>
-      <td>40784</td>
-      <td>32</td>
-      <td>1</td>
-      <td>white</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>16990</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>2006</td>
-      <td>rolls-royce phantom vi base</td>
-      <td>rolls-royce</td>
-      <td>phantom</td>
-      <td>23050</td>
-      <td>32</td>
-      <td>1</td>
-      <td>gray</td>
-      <td>tan</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>105000</td>
-    </tr>
-    <tr>
-      <th>19</th>
       <td>2015</td>
-      <td>mercedes-benz c 300</td>
-      <td>mercedes-benz</td>
-      <td>c</td>
-      <td>35286</td>
-      <td>32</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>23</td>
-      <td>jumbo luxury cars</td>
-      <td>23990</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>2006</td>
-      <td>bmw 325 i</td>
+      <td>bmw 435 i</td>
       <td>bmw</td>
-      <td>325</td>
-      <td>112676</td>
+      <td>435</td>
+      <td>61131</td>
       <td>32</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>8</td>
-      <td>pride auto sales</td>
-      <td>5895</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>2004</td>
-      <td>porsche 911 targa</td>
-      <td>porsche</td>
-      <td>911</td>
-      <td>49943</td>
-      <td>32</td>
-      <td>1</td>
-      <td>basalt</td>
-      <td>brown leather</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>54</td>
-      <td>chantilly auto sales</td>
-      <td>29995</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>2014</td>
-      <td>audi r8 4.2</td>
-      <td>audi</td>
-      <td>r8</td>
-      <td>16864</td>
-      <td>23</td>
-      <td>1</td>
-      <td>metallic</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>95</td>
-      <td>action pre-owned automotive</td>
-      <td>88999</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>2012</td>
-      <td>kia optima ex</td>
-      <td>kia</td>
-      <td>optima</td>
-      <td>74974</td>
-      <td>27</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>24</td>
-      <td>mini of sterling</td>
-      <td>9922</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>2014</td>
-      <td>mercedes-benz slk250</td>
-      <td>mercedes-benz</td>
-      <td>slk250</td>
-      <td>10571</td>
-      <td>21</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>8</td>
-      <td>carmaxdulles</td>
-      <td>28998</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>2016</td>
-      <td>bmw m4 base</td>
-      <td>bmw</td>
-      <td>m4</td>
-      <td>28407</td>
-      <td>28</td>
-      <td>1</td>
-      <td>black</td>
-      <td>opal white</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>65</td>
-      <td>luxury sports  &amp; imports</td>
-      <td>53950</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>2013</td>
-      <td>lexus lx 570 base</td>
-      <td>lexus</td>
-      <td>lx</td>
-      <td>101791</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>31</td>
-      <td>virginia auto  trader co.</td>
-      <td>34995</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>2012</td>
-      <td>hyundai veloster base</td>
-      <td>hyundai</td>
-      <td>veloster</td>
-      <td>74824</td>
-      <td>21</td>
-      <td>1</td>
-      <td>ultra</td>
-      <td>black</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>31</td>
-      <td>virginia auto  trader co.</td>
-      <td>7995</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>2007</td>
-      <td>pontiac grand prix gt</td>
-      <td>pontiac</td>
-      <td>grand</td>
-      <td>110422</td>
-      <td>20</td>
-      <td>1</td>
-      <td>ivory</td>
-      <td>cashmere</td>
-      <td>4-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>45</td>
-      <td>cherner brothers  auto brokers</td>
-      <td>4293</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>2015</td>
-      <td>mercedes-benz s 550 4matic</td>
-      <td>mercedes-benz</td>
-      <td>s</td>
-      <td>25016</td>
-      <td>32</td>
-      <td>1</td>
-      <td>iridium</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>60</td>
-      <td>mercedes-benz of pittsburgh</td>
-      <td>58399</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>4970</th>
-      <td>2018</td>
-      <td>chevrolet camaro 1ss</td>
-      <td>chevrolet</td>
-      <td>camaro</td>
-      <td>2240</td>
-      <td>21</td>
-      <td>1</td>
-      <td>hyper</td>
-      <td>jet black</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>67</td>
-      <td>concordnissan</td>
-      <td>34990</td>
-    </tr>
-    <tr>
-      <th>4971</th>
-      <td>2014</td>
-      <td>volkswagen passat 2.0l tdi dsg</td>
-      <td>volkswagen</td>
-      <td>passat</td>
-      <td>123272</td>
-      <td>26</td>
-      <td>0</td>
-      <td>opera</td>
-      <td>beige</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>4</td>
-      <td>1089</td>
-      <td>luther westside vw</td>
-      <td>10875</td>
-    </tr>
-    <tr>
-      <th>4972</th>
-      <td>2013</td>
-      <td>bmw m3 base</td>
-      <td>bmw</td>
-      <td>m3</td>
-      <td>32039</td>
-      <td>31</td>
       <td>1</td>
       <td>alpine</td>
       <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>4</td>
-      <td>34</td>
-      <td>bmw north scottsdale</td>
-      <td>39517</td>
-    </tr>
-    <tr>
-      <th>4973</th>
-      <td>2016</td>
-      <td>jaguar xj xj r-sport</td>
-      <td>jaguar</td>
-      <td>xj</td>
-      <td>14653</td>
-      <td>30</td>
-      <td>1</td>
-      <td>ultimate</td>
-      <td>jet</td>
       <td>8-speed</td>
       <td>rwd</td>
       <td>5</td>
-      <td>50</td>
-      <td>onyxmotorsports</td>
-      <td>47988</td>
-    </tr>
-    <tr>
-      <th>4974</th>
-      <td>2010</td>
-      <td>mazda mazda3 i sport</td>
-      <td>mazda</td>
-      <td>mazda3</td>
-      <td>184511</td>
-      <td>24</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>5-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>7</td>
-      <td>murdockgm</td>
-      <td>3975</td>
-    </tr>
-    <tr>
-      <th>4975</th>
-      <td>2015</td>
-      <td>bmw alpina b6 xdrive</td>
-      <td>bmw</td>
-      <td>alpina</td>
-      <td>41042</td>
-      <td>32</td>
-      <td>1</td>
-      <td>citrin</td>
-      <td>black</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>5</td>
-      <td>19</td>
-      <td>vipautos</td>
-      <td>61499</td>
-    </tr>
-    <tr>
-      <th>4976</th>
-      <td>2011</td>
-      <td>porsche panamera</td>
-      <td>porsche</td>
-      <td>panamera</td>
-      <td>96479</td>
-      <td>30</td>
-      <td>1</td>
-      <td>black</td>
-      <td>automatic w manual</td>
-      <td>x-speed</td>
-      <td>fwd</td>
-      <td>4</td>
-      <td>346</td>
-      <td>siry auto group</td>
-      <td>27999</td>
-    </tr>
-    <tr>
-      <th>4977</th>
-      <td>2017</td>
-      <td>audi r8 5.2</td>
-      <td>audi</td>
-      <td>r8</td>
-      <td>5522</td>
       <td>26</td>
-      <td>1</td>
-      <td>vegas</td>
-      <td>graphite</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>1</td>
-      <td>4</td>
-      <td>maserati of  anaheim hills</td>
-      <td>156796</td>
-    </tr>
-    <tr>
-      <th>4978</th>
-      <td>2015</td>
-      <td>mercedes-benz s 600</td>
-      <td>mercedes-benz</td>
-      <td>s</td>
-      <td>25434</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>12</td>
-      <td>eurocarinc.</td>
-      <td>89888</td>
-    </tr>
-    <tr>
-      <th>4979</th>
-      <td>2013</td>
-      <td>mercedes-benz cls550</td>
-      <td>mercedes-benz</td>
-      <td>cls550</td>
-      <td>68123</td>
-      <td>26</td>
-      <td>1</td>
-      <td>diamond</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>4</td>
-      <td>591</td>
-      <td>house of imports</td>
-      <td>26500</td>
-    </tr>
-    <tr>
-      <th>4980</th>
-      <td>2015</td>
-      <td>maserati ghibli 4dr sedan</td>
-      <td>maserati</td>
-      <td>ghibli</td>
-      <td>16894</td>
-      <td>23</td>
-      <td>1</td>
-      <td>bianco</td>
-      <td>brown</td>
-      <td>8-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>54</td>
-      <td>jem motor corp</td>
-      <td>36300</td>
-    </tr>
-    <tr>
-      <th>4981</th>
-      <td>2011</td>
-      <td>bmw m3 base</td>
-      <td>bmw</td>
-      <td>m3</td>
-      <td>92421</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>red</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>0</td>
-      <td>0</td>
-      <td>loyal signature motors</td>
-      <td>24995</td>
-    </tr>
-    <tr>
-      <th>4982</th>
-      <td>2015</td>
-      <td>nissan sentra sl</td>
-      <td>nissan</td>
-      <td>sentra</td>
-      <td>43097</td>
-      <td>23</td>
-      <td>1</td>
-      <td>amethyst</td>
-      <td>beige</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>15</td>
-      <td>shingle springs subaru</td>
-      <td>14188</td>
-    </tr>
-    <tr>
-      <th>4983</th>
-      <td>2006</td>
-      <td>porsche cayman s</td>
-      <td>porsche</td>
-      <td>cayman</td>
-      <td>59710</td>
-      <td>32</td>
-      <td>0</td>
-      <td>midnight</td>
-      <td>stone grey</td>
-      <td>6-speed</td>
-      <td>rwd</td>
-      <td>5</td>
-      <td>7</td>
-      <td>luxurymotorcars</td>
-      <td>26900</td>
-    </tr>
-    <tr>
-      <th>4984</th>
-      <td>2016</td>
-      <td>lincoln mkt</td>
-      <td>lincoln</td>
-      <td>mkt</td>
-      <td>40922</td>
-      <td>23</td>
-      <td>1</td>
-      <td>black</td>
-      <td>n a</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>0</td>
-      <td>0</td>
-      <td>carmax capitol expressway</td>
-      <td>21998</td>
-    </tr>
-    <tr>
-      <th>4985</th>
-      <td>2017</td>
-      <td>audi s3 2.0t premium plus</td>
-      <td>audi</td>
-      <td>s3</td>
-      <td>6446</td>
-      <td>24</td>
-      <td>1</td>
-      <td>glacier</td>
-      <td>black</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>69</td>
-      <td>san francisco  audi  mazda</td>
-      <td>42000</td>
-    </tr>
-    <tr>
-      <th>4986</th>
-      <td>2017</td>
-      <td>lamborghini aventador</td>
-      <td>lamborghini</td>
-      <td>aventador</td>
-      <td>11023</td>
-      <td>43</td>
-      <td>1</td>
-      <td>nero</td>
-      <td>nero ade</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>3</td>
-      <td>9</td>
-      <td>british motor  car  distributors</td>
-      <td>395900</td>
-    </tr>
-    <tr>
-      <th>4987</th>
-      <td>2000</td>
-      <td>porsche 911 carrera</td>
-      <td>porsche</td>
-      <td>911</td>
-      <td>98600</td>
-      <td>22</td>
-      <td>1</td>
-      <td>gray</td>
-      <td></td>
-      <td>x-speed</td>
-      <td>fwd</td>
-      <td>5</td>
-      <td>19</td>
-      <td>full throttle  auto sales</td>
-      <td>23995</td>
-    </tr>
-    <tr>
-      <th>4988</th>
-      <td>2015</td>
-      <td>infiniti q40 base</td>
-      <td>infiniti</td>
-      <td>q40</td>
-      <td>31215</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>beige</td>
-      <td>7-speed</td>
-      <td>rwd</td>
-      <td>4</td>
-      <td>44</td>
-      <td>carvana raleigh  (as  soon</td>
-      <td>19400</td>
-    </tr>
-    <tr>
-      <th>4989</th>
-      <td>2015</td>
-      <td>jaguar xj base</td>
-      <td>jaguar</td>
-      <td>xj</td>
-      <td>37580</td>
-      <td>32</td>
-      <td>1</td>
-      <td>dark</td>
-      <td>oyster</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>42</td>
-      <td>carvana chicago  (as  soon</td>
-      <td>33400</td>
-    </tr>
-    <tr>
-      <th>4990</th>
-      <td>2015</td>
-      <td>toyota highlander le plus</td>
-      <td>toyota</td>
-      <td>highlander</td>
-      <td>29928</td>
-      <td>32</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>65</td>
-      <td>carvana nashville  (as  soon</td>
-      <td>26800</td>
-    </tr>
-    <tr>
-      <th>4991</th>
-      <td>2015</td>
-      <td>mercedes-benz ml 350 4matic</td>
-      <td>mercedes-benz</td>
-      <td>ml</td>
-      <td>52457</td>
-      <td>32</td>
-      <td>1</td>
-      <td>silver</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>43</td>
-      <td>carvana indianapolis  (as  soon</td>
-      <td>27700</td>
-    </tr>
-    <tr>
-      <th>4992</th>
-      <td>2017</td>
-      <td>mercedes-benz gle 350 base 4matic</td>
-      <td>mercedes-benz</td>
-      <td>gle</td>
-      <td>6389</td>
-      <td>32</td>
-      <td>1</td>
-      <td>off</td>
-      <td>beige</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>42</td>
-      <td>carvana pittsburgh  (as  soon</td>
-      <td>52400</td>
-    </tr>
-    <tr>
-      <th>4993</th>
-      <td>2017</td>
-      <td>infiniti qx70 base</td>
-      <td>infiniti</td>
-      <td>qx70</td>
-      <td>3286</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>black</td>
-      <td>7-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>42</td>
-      <td>carvana st.  louis  (as</td>
-      <td>37200</td>
-    </tr>
-    <tr>
-      <th>4994</th>
-      <td>2016</td>
-      <td>toyota highlander limited platinum</td>
-      <td>toyota</td>
-      <td>highlander</td>
-      <td>35067</td>
-      <td>32</td>
-      <td>1</td>
-      <td>white</td>
-      <td>gray</td>
-      <td>6-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>41</td>
-      <td>carvana new  york  #1</td>
-      <td>36200</td>
-    </tr>
-    <tr>
-      <th>4995</th>
-      <td>2015</td>
-      <td>volkswagen passat 2.0l tdi dsg</td>
-      <td>volkswagen</td>
-      <td>passat</td>
-      <td>19872</td>
-      <td>32</td>
-      <td>1</td>
-      <td>black</td>
-      <td>beige</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>4</td>
-      <td>43</td>
-      <td>carvana indianapolis  (as  soon</td>
-      <td>19000</td>
-    </tr>
-    <tr>
-      <th>4996</th>
-      <td>2015</td>
-      <td>toyota corolla le</td>
-      <td>toyota</td>
-      <td>corolla</td>
-      <td>28695</td>
-      <td>32</td>
-      <td>1</td>
-      <td>red</td>
-      <td>tan</td>
-      <td>6-speed</td>
-      <td>fwd</td>
-      <td>4</td>
-      <td>42</td>
-      <td>carvana hartford  &amp;  new</td>
-      <td>12900</td>
-    </tr>
-    <tr>
-      <th>4997</th>
-      <td>2015</td>
-      <td>jaguar xj base</td>
-      <td>jaguar</td>
-      <td>xj</td>
-      <td>37580</td>
-      <td>32</td>
-      <td>1</td>
-      <td>dark</td>
-      <td>oyster</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>41</td>
-      <td>carvana tucson  (as  soon</td>
-      <td>33400</td>
-    </tr>
-    <tr>
-      <th>4998</th>
-      <td>2015</td>
-      <td>kia soul ev</td>
-      <td>kia</td>
-      <td>soul</td>
-      <td>30041</td>
-      <td>32</td>
-      <td>1</td>
-      <td>white</td>
-      <td>gray</td>
-      <td>1-speed</td>
-      <td>fwd</td>
-      <td>4</td>
-      <td>44</td>
-      <td>carvana raleigh  (as  soon</td>
-      <td>15000</td>
-    </tr>
-    <tr>
-      <th>4999</th>
-      <td>2016</td>
-      <td>lexus rx 350</td>
-      <td>lexus</td>
-      <td>rx</td>
-      <td>19254</td>
-      <td>32</td>
-      <td>1</td>
-      <td>dark</td>
-      <td>brown</td>
-      <td>8-speed</td>
-      <td>4wd</td>
-      <td>4</td>
-      <td>46</td>
-      <td>carvana houston  (as  soon</td>
-      <td>39100</td>
+      <td>inetwork auto group</td>
+      <td>23998</td>
     </tr>
   </tbody>
 </table>
-<p>5000 rows × 15 columns</p>
 </div>
 </div>
 
@@ -13120,7 +12147,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Exclude prices and non-branded data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;brand&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
 </pre></div>
 
@@ -13134,7 +12162,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transforming data for data processing</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;miles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;miles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;photos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;photos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
@@ -13148,12 +12177,21 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Put-Crawled-data-into-Database-(MySQL)-at-Amazon-web-service-cloud">Put Crawled data into Database (MySQL) at Amazon web service cloud<a class="anchor-link" href="#Put-Crawled-data-into-Database-(MySQL)-at-Amazon-web-service-cloud">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[43]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pw</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./Data/pw.plk&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load pickle file as database password</span>
+<span class="n">pw</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./Data/pw.plk&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -13166,8 +12204,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[45]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># write local car_info</span>
-<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;mysql+mysqldb://root:&quot;</span> <span class="o">+</span> <span class="n">pw</span> <span class="o">+</span> <span class="s2">&quot;@127.0.0.1/used_car&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Saving data to the database(MySQL at Amazon Web Service Cloud )</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;mysql+mysqldb://root:&quot;</span> <span class="o">+</span> <span class="n">pw</span> <span class="o">+</span> <span class="s2">&quot;@13.125.22.6/used_car&quot;</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;used_car&quot;</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span>
 </pre></div>
 
